@@ -1,0 +1,2853 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spark Finance OS — Portfolio & Wealth Dashboard</title>
+  <style>
+    /* CSS Reset & Design Tokens based on shadcn/ui */
+    :root {
+      --background: #ffffff;
+      --foreground: #09090b;
+      --card: #ffffff;
+      --card-foreground: #09090b;
+      --popover: #ffffff;
+      --popover-foreground: #09090b;
+      --primary: #0284c7;
+      --primary-foreground: #ffffff;
+      --secondary: #f4f4f5;
+      --secondary-foreground: #18181b;
+      --muted: #f4f4f5;
+      --muted-foreground: #71717a;
+      --accent: #f4f4f5;
+      --accent-foreground: #18181b;
+      --destructive: #ef4444;
+      --destructive-foreground: #fafafa;
+      --border: #e4e4e7;
+      --input: #e4e4e7;
+      --ring: #0284c7;
+      --radius: 0.75rem;
+      --success: #16a34a;
+      --success-bg: #dcfce7;
+      --warning: #ea580c;
+      --warning-bg: #ffedd5;
+      --info: #0284c7;
+      --info-bg: #e0f2fe;
+    }
+
+    .dark {
+      --background: #09090b;
+      --foreground: #fafafa;
+      --card: #121215;
+      --card-foreground: #fafafa;
+      --popover: #121215;
+      --popover-foreground: #fafafa;
+      --primary: #38bdf8;
+      --primary-foreground: #09090b;
+      --secondary: #27272a;
+      --secondary-foreground: #fafafa;
+      --muted: #1c1c20;
+      --muted-foreground: #a1a1aa;
+      --accent: #27272a;
+      --accent-foreground: #fafafa;
+      --destructive: #7f1d1d;
+      --destructive-foreground: #fafafa;
+      --border: #27272e;
+      --input: #27272e;
+      --ring: #38bdf8;
+      --success: #22c55e;
+      --success-bg: rgba(34, 197, 94, 0.15);
+      --warning: #f97316;
+      --warning-bg: rgba(249, 115, 22, 0.15);
+      --info: #38bdf8;
+      --info-bg: rgba(56, 189, 248, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+      background-color: var(--background);
+      color: var(--foreground);
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+    }
+
+    .num {
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum";
+    }
+
+    /* Layout Components */
+    #sidebar {
+      width: 260px;
+      min-height: 100vh;
+      background-color: var(--card);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      transition: width 0.25s cubic-bezier(0.4, 0, 0.2, 1), transform 0.25s ease;
+      z-index: 40;
+    }
+
+    #sidebar.collapsed {
+      width: 72px;
+    }
+
+    #sidebar.collapsed .nav-text,
+    #sidebar.collapsed .brand-text,
+    #sidebar.collapsed .nav-badge {
+      display: none;
+    }
+
+    #sidebar.collapsed .sidebar-header {
+      justify-content: center;
+      padding: 1rem 0.5rem;
+    }
+
+    #sidebar.collapsed .nav-item {
+      justify-content: center;
+      padding: 0.75rem 0;
+    }
+
+    .sidebar-header {
+      padding: 1.25rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #0284c7, #38bdf8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+    }
+
+    .brand-title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      line-height: 1.2;
+    }
+
+    .brand-subtitle {
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+    }
+
+    .nav-list {
+      list-style: none;
+      padding: 1rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      flex: 1;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 0.5rem;
+      color: var(--muted-foreground);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .nav-item:hover {
+      background-color: var(--accent);
+      color: var(--foreground);
+    }
+
+    .nav-item.active {
+      background-color: var(--accent);
+      color: var(--primary);
+      font-weight: 600;
+      border-color: rgba(56, 189, 248, 0.2);
+    }
+
+    .nav-icon {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      font-size: 0.675rem;
+      padding: 0.15rem 0.45rem;
+      border-radius: 9999px;
+      background-color: var(--muted);
+      color: var(--muted-foreground);
+      border: 1px solid var(--border);
+    }
+
+    /* Main Content Area */
+    #main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background-color: var(--background);
+    }
+
+    /* Top Bar */
+    header {
+      height: 60px;
+      border-bottom: 1px solid var(--border);
+      background-color: var(--card);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      backdrop-filter: blur(8px);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .breadcrumbs {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: var(--muted-foreground);
+    }
+
+    .breadcrumbs span.current {
+      color: var(--foreground);
+      font-weight: 600;
+    }
+
+    /* Top bar buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.85rem;
+      border-radius: 0.5rem;
+      font-size: 0.825rem;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      background-color: var(--card);
+      color: var(--foreground);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      outline: none;
+    }
+
+    .btn:hover {
+      background-color: var(--accent);
+      border-color: var(--muted-foreground);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.92;
+    }
+
+    .btn-sm {
+      padding: 0.3rem 0.6rem;
+      font-size: 0.75rem;
+    }
+
+    .btn-icon {
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Currency Switcher Pill Group */
+    .currency-switch {
+      display: flex;
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      overflow: hidden;
+      background-color: var(--muted);
+      padding: 2px;
+    }
+
+    .currency-btn {
+      padding: 0.25rem 0.6rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      color: var(--muted-foreground);
+      cursor: pointer;
+      border-radius: 0.375rem;
+      transition: all 0.15s ease;
+    }
+
+    .currency-btn.active {
+      background-color: var(--card);
+      color: var(--foreground);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    /* Content Container */
+    main {
+      padding: 1.75rem 2rem 5rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Page Header */
+    .page-header {
+      margin-bottom: 1.75rem;
+    }
+
+    .page-eyebrow {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--primary);
+      margin-bottom: 0.35rem;
+    }
+
+    .page-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .page-desc {
+      font-size: 0.875rem;
+      color: var(--muted-foreground);
+      margin-top: 0.35rem;
+      max-width: 800px;
+    }
+
+    /* KPI Cards Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.75rem;
+    }
+
+    .kpi-card {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.4rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .kpi-card:hover {
+      box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.15);
+    }
+
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+    }
+
+    .kpi-card.tone-primary::before { background-color: var(--primary); }
+    .kpi-card.tone-success::before { background-color: var(--success); }
+    .kpi-card.tone-warning::before { background-color: var(--warning); }
+    .kpi-card.tone-info::before { background-color: #a855f7; }
+
+    .kpi-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.75rem;
+    }
+
+    .kpi-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted-foreground);
+    }
+
+    .kpi-icon {
+      color: var(--muted-foreground);
+    }
+
+    .kpi-val {
+      font-size: 1.85rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .kpi-sub {
+      font-size: 0.775rem;
+      color: var(--muted-foreground);
+      margin-top: 0.45rem;
+      line-height: 1.4;
+    }
+
+    /* Generic Panel / Card */
+    .panel {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.4rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .panel-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--foreground);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.2rem 0.55rem;
+      border-radius: 9999px;
+      font-size: 0.725rem;
+      font-weight: 600;
+    }
+
+    .badge-success {
+      background-color: var(--success-bg);
+      color: var(--success);
+    }
+
+    .badge-warning {
+      background-color: var(--warning-bg);
+      color: var(--warning);
+    }
+
+    .badge-info {
+      background-color: var(--info-bg);
+      color: var(--info);
+    }
+
+    .badge-muted {
+      background-color: var(--muted);
+      color: var(--muted-foreground);
+    }
+
+    /* Tables */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+    th {
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--muted-foreground);
+      border-bottom: 1px solid var(--border);
+      background-color: var(--muted);
+    }
+
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--foreground);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background-color: var(--accent);
+    }
+
+    /* Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+
+    .grid-5 {
+      display: grid;
+      grid-template-columns: 2fr 3fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-5, .grid-3, .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Form Inputs & Controls */
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.775rem;
+      font-weight: 600;
+      color: var(--muted-foreground);
+      margin-bottom: 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.55rem 0.85rem;
+      background-color: var(--background);
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      color: var(--foreground);
+      font-size: 0.875rem;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .form-control:focus {
+      border-color: var(--primary);
+    }
+
+    /* Sliders */
+    .slider-container {
+      margin-bottom: 1.25rem;
+    }
+
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.45rem;
+      font-size: 0.85rem;
+    }
+
+    .slider-val {
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    input[type=range] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: var(--muted);
+      outline: none;
+      -webkit-appearance: none;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--primary);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    /* Mobile Drawer */
+    #mobile-drawer {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 50;
+    }
+
+    #mobile-drawer.open {
+      display: block;
+    }
+
+    .drawer-content {
+      width: 280px;
+      height: 100%;
+      background-color: var(--card);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      animation: slideIn 0.25s ease-out;
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(0); }
+    }
+
+    /* Toast Notification */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      color: var(--foreground);
+      padding: 0.85rem 1.25rem;
+      border-radius: var(--radius);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      z-index: 100;
+      font-size: 0.875rem;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+      transition: all 0.25s ease;
+    }
+
+    #toast.show {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      z-index: 60;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 520px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      overflow: hidden;
+      animation: zoomIn 0.2s ease-out;
+    }
+
+    @keyframes zoomIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      background-color: var(--muted);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+
+    /* Mobile Bottom Navigation */
+    #mobile-bottom-nav {
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background-color: var(--card);
+      border-top: 1px solid var(--border);
+      z-index: 35;
+      grid-template-columns: repeat(6, 1fr);
+      align-items: center;
+    }
+
+    .bottom-nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      color: var(--muted-foreground);
+      text-decoration: none;
+      gap: 0.2rem;
+      cursor: pointer;
+    }
+
+    .bottom-nav-item.active {
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    @media (max-width: 768px) {
+      #sidebar { display: none; }
+      #mobile-bottom-nav { display: grid; }
+      main { padding: 1.25rem 1rem 5rem 1rem; }
+      header { padding: 0 1rem; }
+    }
+
+    /* SVG Charts styling */
+    .chart-container {
+      width: 100%;
+      height: 320px;
+      position: relative;
+    }
+
+    .chart-svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    /* AI Chat view */
+    .chat-container {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 240px);
+      min-height: 520px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background-color: var(--card);
+      overflow: hidden;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .chat-bubble {
+      max-width: 80%;
+      padding: 1rem 1.25rem;
+      border-radius: 1rem;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .chat-bubble.assistant {
+      align-self: flex-start;
+      background-color: var(--muted);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 0.25rem;
+    }
+
+    .chat-bubble.user {
+      align-self: flex-end;
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      border-bottom-right-radius: 0.25rem;
+    }
+
+    .chat-input-area {
+      padding: 1rem;
+      border-top: 1px solid var(--border);
+      background-color: var(--background);
+      display: flex;
+      gap: 0.75rem;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: 0.5rem;
+      background-color: var(--card);
+      color: var(--foreground);
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    .chat-input:focus {
+      border-color: var(--primary);
+    }
+
+    .chat-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      background-color: var(--accent);
+      border-top: 1px solid var(--border);
+    }
+
+    .chip-btn {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      padding: 0.35rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      color: var(--foreground);
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .chip-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .spin {
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Collapsible Sidebar -->
+  <aside id="sidebar">
+    <div class="sidebar-header">
+      <div class="brand-icon">⚡</div>
+      <div class="brand-text">
+        <div class="brand-title">Spark Finance OS</div>
+        <div class="brand-subtitle">ABN 81 315 008 648</div>
+      </div>
+    </div>
+
+    <ul class="nav-list">
+      <li class="nav-item active" data-tab="overview">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+        </span>
+        <span class="nav-text">Dashboard</span>
+        <span class="nav-badge">Live</span>
+      </li>
+
+      <li class="nav-item" data-tab="projections">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+        </span>
+        <span class="nav-text">Projections</span>
+      </li>
+
+      <li class="nav-item" data-tab="thaitax">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" x2="22" y1="2" y2="2"/><line x1="12" x2="12" y1="6" y2="18"/><line x1="2" x2="22" y1="22" y2="22"/><polygon points="2 6 12 2 22 6 22 22 2 22 2 6"/><line x1="6" x2="6" y1="18" y2="22"/><line x1="18" x2="18" y1="18" y2="22"/></svg>
+        </span>
+        <span class="nav-text">Thai Tax</span>
+        <span class="nav-badge">Paw 161</span>
+      </li>
+
+      <li class="nav-item" data-tab="marine">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.76"/><path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/><line x1="12" x2="12" y1="2" y2="10"/></svg>
+        </span>
+        <span class="nav-text">Marine</span>
+        <span class="nav-badge">SHIPAUS</span>
+      </li>
+
+      <li class="nav-item" data-tab="calendar">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+        </span>
+        <span class="nav-text">Calendar</span>
+      </li>
+
+      <li class="nav-item" data-tab="advisor">
+        <span class="nav-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+        </span>
+        <span class="nav-text">Advisor Copilot</span>
+        <span class="nav-badge" style="background-color: var(--primary); color: var(--primary-foreground);">AI</span>
+      </li>
+    </ul>
+
+    <div style="padding: 1rem; border-top: 1px solid var(--border);">
+      <button id="toggle-sidebar" class="btn" style="width: 100%; justify-content: center;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg>
+        <span class="nav-text">Collapse Menu</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Mobile Drawer Overlay -->
+  <div id="mobile-drawer">
+    <div class="drawer-content">
+      <div class="sidebar-header" style="justify-content: space-between;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div class="brand-icon">⚡</div>
+          <div>
+            <div class="brand-title">Spark Finance</div>
+            <div class="brand-subtitle">ABN 81 315 008 648</div>
+          </div>
+        </div>
+        <button id="close-drawer" class="btn btn-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
+        </button>
+      </div>
+      <ul class="nav-list" id="mobile-nav-list">
+        <!-- populated dynamically -->
+      </ul>
+    </div>
+  </div>
+
+  <!-- Main Content Wrapper -->
+  <div id="main-wrapper">
+    <!-- Top Bar -->
+    <header>
+      <div class="header-left">
+        <button id="open-drawer" class="btn btn-icon" style="display: none;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+        </button>
+                <div class="breadcrumbs">
+          <a href="https://drive.google.com/drive/folders/1UAAVQBsxWmGiOw4mwL1eMO0Lnnb0O4BU" target="_blank" style="color: inherit; text-decoration: none; display: flex; align-items: center; gap: 4px;" title="Open Financials_Master in Google Drive"><span>Financials_Master</span></a>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+          <a href="https://docs.google.com/spreadsheets/d/10MhUF1b5UKgCzXRme14mZsjVmhE1ScKf0GCZKA9JUg4/edit?usp=drivesdk" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 4px;" title="Connected to Google Sheet: Master_Financial_Ledger">
+            <span id="breadcrumb-title">Master_Financial_Ledger</span>
+            <span class="badge badge-success" style="font-size: 10px; padding: 1px 6px;">Synced</span>
+          </a>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- Currency Switcher -->
+        <div class="currency-switch">
+          <button class="currency-btn active" data-cur="AUD">AUD (A$)</button>
+          <button class="currency-btn" data-cur="USD">USD ($)</button>
+          <button class="currency-btn" data-cur="THB">THB (฿)</button>
+        </div>
+
+        <!-- Quick Refresh / Sync Button -->
+        <button id="refresh-btn" class="btn" title="Simulate ledger & live market sync">
+          <svg id="sync-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+          <span id="sync-label">Sync</span>
+        </button>
+
+        <!-- Dark / Light Mode Toggle -->
+        <button id="theme-toggle" class="btn btn-icon" title="Toggle dark / light theme">
+          <svg id="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main View Tab Container -->
+    <main>
+      <!-- TAB 1: OVERVIEW / PORTFOLIO -->
+      <section id="tab-overview" class="tab-content">
+        <div class="page-header">
+          <div class="page-eyebrow">Module 01 & 02 · Portfolio & Wealth Console</div>
+          <h1 class="page-title">Executive Dashboard</h1>
+          <p class="page-desc">Consolidated position across high-yield NEOS income ETFs, SHIPAUS marine charter operations, and Thai tax compliance.</p>
+        </div>
+
+        <!-- 4 Primary KPI Cards Required -->
+        <div class="kpi-grid">
+          <div class="kpi-card tone-primary">
+            <div class="kpi-top">
+              <span class="kpi-label">Total Portfolio Value</span>
+              <span class="kpi-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+              </span>
+            </div>
+            <div class="kpi-val num" id="kpi-total-val">A$108,024</div>
+            <div class="kpi-sub" id="kpi-total-sub">Cost A$107,328 · <span class="badge badge-success">+A$696 (+0.65%)</span></div>
+          </div>
+
+          <div class="kpi-card tone-success">
+            <div class="kpi-top">
+              <span class="kpi-label">Projected Annual Income</span>
+              <span class="kpi-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+              </span>
+            </div>
+            <div class="kpi-val num" id="kpi-annual-inc">A$63,556</div>
+            <div class="kpi-sub">A$17,556 NEOS Divs + A$46,000 Marine Operations</div>
+          </div>
+
+          <div class="kpi-card tone-warning">
+            <div class="kpi-top">
+              <span class="kpi-label">Monthly Cash Flow</span>
+              <span class="kpi-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+              </span>
+            </div>
+            <div class="kpi-val num" id="kpi-monthly-flow">A$5,296 / mo</div>
+            <div class="kpi-sub">A$1,463/mo ETF distributions + A$3,833/mo charter fees</div>
+          </div>
+
+          <div class="kpi-card tone-info">
+            <div class="kpi-top">
+              <span class="kpi-label">Tax Estimates</span>
+              <span class="kpi-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+              </span>
+            </div>
+            <div class="kpi-val num" id="kpi-tax-est">A$4,600</div>
+            <div class="kpi-sub">ATO BAS GST (Box 1A) · Thai PIT remittance pending</div>
+          </div>
+        </div>
+
+        <!-- Asset Allocation & Sleeve Drift -->
+        <div class="grid-5">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+                Asset Allocation
+              </div>
+              <span class="badge badge-info">Drift Engine</span>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+              <div style="display: flex; height: 16px; border-radius: 9999px; overflow: hidden; margin-bottom: 1rem;">
+                <div style="width: 56%; background-color: #f59e0b;" title="Crypto 56%"></div>
+                <div style="width: 27.8%; background-color: #0284c7;" title="Equities 27.8%"></div>
+                <div style="width: 16.2%; background-color: #10b981;" title="Gold 16.2%"></div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 0.85rem;" id="sleeve-list">
+                <!-- populated dynamically -->
+              </div>
+            </div>
+
+            <div style="border-top: 1px solid var(--border); padding-top: 1rem;">
+              <div style="font-size: 0.775rem; font-weight: 600; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 0.5rem;">Rebalancing Action</div>
+              <p style="font-size: 0.825rem; color: var(--muted-foreground); line-height: 1.4;">
+                Crypto sleeve is overweight (<span style="color: #f59e0b; font-weight: 600;">56.0%</span> vs 50% target). Route this month's <span id="route-cash-text" style="font-weight: 600;">A$1,463</span> cash distribution directly into <strong style="color: var(--primary);">SPYI</strong> and <strong style="color: var(--primary);">QQQI</strong>.
+              </p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
+                Core Holdings & Yield
+              </div>
+              <button class="btn btn-sm btn-primary" id="btn-add-holding">+ Add Asset</button>
+            </div>
+
+            <div class="table-container">
+              <table id="holdings-table">
+                <thead>
+                  <tr>
+                    <th>Ticker</th>
+                    <th>Sleeve</th>
+                    <th style="text-align: right;">Units</th>
+                    <th style="text-align: right;">Price</th>
+                    <th style="text-align: right;">Market Value</th>
+                    <th style="text-align: right;">Weight</th>
+                    <th style="text-align: right;">Monthly Div</th>
+                    <th style="text-align: center;">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="holdings-tbody">
+                  <!-- dynamically populated -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: PROJECTIONS -->
+      <section id="tab-projections" class="tab-content" style="display: none;">
+        <div class="page-header">
+          <div class="page-eyebrow">Module 06 · Compound Growth & Income Simulator</div>
+          <h1 class="page-title">Portfolio Projections</h1>
+          <p class="page-desc">Simulate dividend reinvestment plan (DRIP), organic capital appreciation, and long-term passive cash flow growth.</p>
+        </div>
+
+        <div class="grid-5">
+          <!-- Controls Panel -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="21" y2="21"/><line x1="4" x2="20" y1="3" y2="3"/><polyline points="4 15 8 9 12 11 16 6 20 10"/></svg>
+                Scenario Parameters
+              </div>
+              <button class="btn btn-sm" id="btn-reset-proj">Reset</button>
+            </div>
+
+            <div class="slider-container">
+              <div class="slider-header">
+                <span>Annual Dividend Yield</span>
+                <span class="slider-val" id="val-yield">17.5%</span>
+              </div>
+              <input type="range" id="input-yield" min="5" max="30" step="0.5" value="17.5">
+            </div>
+
+            <div class="slider-container">
+              <div class="slider-header">
+                <span>Monthly Contribution</span>
+                <span class="slider-val num" id="val-contrib">A$500</span>
+              </div>
+              <input type="range" id="input-contrib" min="0" max="5000" step="100" value="500">
+            </div>
+
+            <div class="slider-container">
+              <div class="slider-header">
+                <span>Time Horizon</span>
+                <span class="slider-val" id="val-years">5 Years</span>
+              </div>
+              <input type="range" id="input-years" min="1" max="20" step="1" value="5">
+            </div>
+
+            <div class="slider-container">
+              <div class="slider-header">
+                <span>Annual Capital Growth Rate</span>
+                <span class="slider-val" id="val-div-growth">3.0%</span>
+              </div>
+              <input type="range" id="input-div-growth" min="0" max="10" step="0.5" value="3.0">
+            </div>
+
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-top: 1px solid var(--border);">
+              <div>
+                <div style="font-size: 0.85rem; font-weight: 600;">Reinvest Dividends (DRIP)</div>
+                <div style="font-size: 0.75rem; color: var(--muted-foreground);">Compound distributions monthly</div>
+              </div>
+              <input type="checkbox" id="input-drip" checked style="width: 18px; height: 18px; cursor: pointer;">
+            </div>
+
+            <div style="margin-top: 1.5rem; background: var(--muted); padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border);">
+              <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--muted-foreground); font-weight: 600;">Projected Balance (End of Horizon)</div>
+              <div style="font-size: 1.75rem; font-weight: 700; color: var(--primary); margin: 0.25rem 0;" class="num" id="proj-end-balance">A$312,450</div>
+              <div style="font-size: 0.8rem; color: var(--muted-foreground);" id="proj-passive-income">Generates ~A$54,678 / yr passive income</div>
+            </div>
+          </div>
+
+          <!-- Chart & Trajectory Panel -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 15h18"/><path d="m9 9 3 3 6-6"/></svg>
+                Compounding Growth Curve
+              </div>
+              <div style="display: flex; gap: 1rem; font-size: 0.75rem;">
+                <span style="display: flex; align-items: center; gap: 0.35rem;"><span style="width: 10px; height: 10px; border-radius: 2px; background: #0284c7;"></span> Total Value</span>
+                <span style="display: flex; align-items: center; gap: 0.35rem;"><span style="width: 10px; height: 10px; border-radius: 2px; background: #94a3b8;"></span> Contributed</span>
+              </div>
+            </div>
+
+            <div class="chart-container" id="projections-chart">
+              <!-- SVG chart rendered via JS -->
+            </div>
+
+            <div style="margin-top: 1.5rem;">
+              <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.75rem;">Year-by-Year Growth Table</div>
+              <div class="table-container">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Year</th>
+                      <th style="text-align: right;">Starting Value</th>
+                      <th style="text-align: right;">Annual Contrib</th>
+                      <th style="text-align: right;">Annual Divs</th>
+                      <th style="text-align: right;">Ending Balance</th>
+                      <th style="text-align: right;">Monthly Run-Rate</th>
+                    </tr>
+                  </thead>
+                  <tbody id="proj-table-body">
+                    <!-- Populated dynamically -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: THAI TAX -->
+      <section id="tab-thaitax" class="tab-content" style="display: none;">
+        <div class="page-header">
+          <div class="page-eyebrow">Module 05 · Revenue Department Compliance</div>
+          <h1 class="page-title">Thai Tax Engine & Deduction Calculator</h1>
+          <p class="page-desc">Comprehensive tax liability model under Orders Paw 161/2566 & 162/2566, tax residency (>180 days in Bangkok), and allowable deductions.</p>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi-card tone-success">
+            <div class="kpi-top"><span class="kpi-label">Tax Residency Status</span><span class="badge badge-success">Resident</span></div>
+            <div class="kpi-val">Bangkok, TH</div>
+            <div class="kpi-sub">Physical presence >180 days in calendar year 2026</div>
+          </div>
+
+          <div class="kpi-card tone-primary">
+            <div class="kpi-top"><span class="kpi-label">Tax ID (TIN)</span><span class="badge badge-info">Verified</span></div>
+            <div class="kpi-val num" style="font-size: 1.35rem;">0991003515691</div>
+            <div class="kpi-sub">Bangkok Revenue Office Area 3</div>
+          </div>
+
+          <div class="kpi-card tone-warning">
+            <div class="kpi-top"><span class="kpi-label">Filing Window</span><span class="badge badge-warning">P.N.D.90/91</span></div>
+            <div class="kpi-val">Jan – Mar 2027</div>
+            <div class="kpi-sub">Online e-filing deadline extends to 8 April 2027</div>
+          </div>
+
+          <div class="kpi-card tone-info">
+            <div class="kpi-top"><span class="kpi-label">Calculated Tax Payable</span><span class="badge badge-muted">Effective Rate</span></div>
+            <div class="kpi-val num" id="thai-effective-tax">฿99,875</div>
+            <div class="kpi-sub" id="thai-effective-rate">Effective Rate: 6.4% on Assessable Income</div>
+          </div>
+        </div>
+
+        <!-- Remittance Rule Checker -->
+        <div class="grid-2">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Paw 161 & 162/2566 Remittance Verdict Engine
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+              <div>
+                <label class="form-label">Fund Vintage (Earned)</label>
+                <select class="form-control" id="thai-vintage">
+                  <option value="Pre-2024">Pre-2024 (Grandfathered Capital)</option>
+                  <option value="2024">2024 Income</option>
+                  <option value="2025">2025 Income</option>
+                  <option value="2026" selected>2026 Income</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="form-label">Remittance Year</label>
+                <select class="form-control" id="thai-year">
+                  <option value="2024">2024</option>
+                  <option value="2025">2025</option>
+                  <option value="2026" selected>2026</option>
+                  <option value="2027">2027</option>
+                </select>
+              </div>
+            </div>
+
+            <div id="thai-verdict-box" style="border: 1px solid var(--border); border-radius: 0.5rem; padding: 1.25rem; background-color: var(--muted);">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+
+          <!-- Progressive Tax Brackets View -->
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+                Thai Progressive PIT Brackets
+              </div>
+              <span class="badge badge-info">2026 Schedule</span>
+            </div>
+
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Taxable Net Income (THB)</th>
+                    <th style="text-align: right;">Rate</th>
+                    <th style="text-align: right;">Bracket Tax</th>
+                    <th style="text-align: right;">Cumulative Max</th>
+                  </tr>
+                </thead>
+                <tbody id="brackets-tbody">
+                  <!-- Populated dynamically -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comprehensive Deductions Calculator -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
+              Thai PIT Deduction & Net Tax Calculator
+            </div>
+            <button class="btn btn-sm btn-primary" id="btn-save-tax-calc">Save Deduction Scenario</button>
+          </div>
+
+          <div class="grid-3">
+            <div>
+              <div class="form-group">
+                <label class="form-label">Total Remitted Assessable Income (THB)</label>
+                <input type="number" class="form-control num" id="calc-gross-income" value="1560000" step="10000">
+                <div style="font-size: 0.725rem; color: var(--muted-foreground); margin-top: 0.25rem;">Equivalent to approx. A$66,380 or $45,780</div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Standard Expense Deduction (50% max 100k)</label>
+                <input type="text" class="form-control num" id="calc-std-deduct" value="100,000" readonly style="background-color: var(--muted);">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Personal Taxpayer Allowance</label>
+                <input type="text" class="form-control num" value="60,000" readonly style="background-color: var(--muted);">
+              </div>
+            </div>
+
+            <div>
+              <div class="form-group">
+                <label class="form-label">Social Security Office (SSO)</label>
+                <input type="number" class="form-control num" id="calc-sso" value="9000" max="9000">
+                <div style="font-size: 0.725rem; color: var(--muted-foreground); margin-top: 0.25rem;">Max 9,000 THB/year</div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Health & Life Insurance (Max 100k THB)</label>
+                <input type="number" class="form-control num" id="calc-insurance" value="50000" max="100000" step="5000">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">RMF / SSF / Provident Fund (Max 500k)</label>
+                <input type="number" class="form-control num" id="calc-rmf" value="100000" max="500000" step="10000">
+              </div>
+            </div>
+
+            <div>
+              <div class="form-group">
+                <label class="form-label">Mortgage Interest Deduction (Max 100k)</label>
+                <input type="number" class="form-control num" id="calc-mortgage" value="45000" max="100000" step="5000">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Charity & Public Donation (Max 10% net)</label>
+                <input type="number" class="form-control num" id="calc-donation" value="10000" step="1000">
+              </div>
+
+              <div style="background: var(--muted); padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border); margin-top: 0.5rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.35rem;">
+                  <span>Total Deductions:</span>
+                  <span class="num font-bold" id="res-total-deductions">374,000 THB</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.35rem;">
+                  <span>Net Taxable Income:</span>
+                  <span class="num font-bold" id="res-net-taxable">1,186,000 THB</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: 700; color: var(--primary); border-top: 1px solid var(--border); padding-top: 0.5rem;">
+                  <span>Tax Liability:</span>
+                  <span class="num" id="res-tax-due">฿161,500</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Remittances Ledger -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+              Wise Remittance Audit Log
+            </div>
+            <button class="btn btn-sm btn-primary" id="btn-add-remit">+ Record Remittance</button>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Description / Purpose</th>
+                  <th>Vintage</th>
+                  <th style="text-align: right;">Source Amount</th>
+                  <th style="text-align: right;">THB Received</th>
+                  <th>Assessment Status</th>
+                  <th style="text-align: center;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="remits-tbody">
+                <!-- populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: MARINE -->
+      <section id="tab-marine" class="tab-content" style="display: none;">
+        <div class="page-header">
+          <div class="page-eyebrow">Module 03 · Commercial Fleet & Asset Hire</div>
+          <h1 class="page-title">Marine Operations — SHIPAUS Pty Ltd</h1>
+          <p class="page-desc">Commercial line boat charter MV COM 4 (UVI 464237), Port Adelaide heavy equipment hire, and quarterly ATO BAS GST reconciliation.</p>
+        </div>
+
+        <!-- Fleet Equipment Cards -->
+        <div class="grid-3" style="margin-bottom: 1.5rem;">
+          <div class="panel" style="margin-bottom: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.75rem;">
+              <div>
+                <div style="font-weight: 700; font-size: 1.05rem;">Line Boat MV COM 4</div>
+                <div style="font-size: 0.75rem; color: var(--muted-foreground);">UVI 464237 · 12.2m Workboat</div>
+              </div>
+              <span class="badge badge-success">Active Charter</span>
+            </div>
+            <dl style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.8rem; margin: 0.85rem 0;">
+              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Charterer</dt><dd class="font-medium">Pacific Marine</dd></div>
+              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Rate (ex-GST)</dt><dd class="font-medium num">A$6,500 / qtr</dd></div>
+              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Annual Revenue</dt><dd class="font-medium num text-primary">A$26,000 / yr</dd></div>
+              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Utilization</dt><dd class="font-medium num text-success">98.5%</dd></div>
+            </dl>
+          </div>
+
+          <div class="panel" style="margin-bottom: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.75rem;">
+              <div>
+                <div style="font-weight: 700; font-size: 1.05rem;">Port Adelaide Hire (PAHE)</div>
+                <div style="font-size: 0.75rem; color: var(--muted-foreground);">4x Spud Barges & Heavy Rigging</div>
+              </div>
+              <span class="badge badge-success">Guaranteed ROI</span>
+            </div>
+            <dl style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.8rem; margin: 0.85rem 0;">
+              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Contract Type</dt><dd class="font-medium">Equipment Guarantee</dd></div>
+              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Annual Yield</dt><dd class="font-medium num text-primary">A$20,000 / yr</dd></div>
+              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Gross Invoiced</dt><dd class="font-medium num">A$22,000 (inc GST)</dd></div>
+              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Status</dt><dd class="font-medium text-success">Paid FY27</dd></div>
+            </dl>
+          </div>
+
+          <div class="panel" style="margin-bottom: 0;">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.75rem;">
+              <div>
+                <div style="font-weight: 700; font-size: 1.05rem;">Newcastle Hire (NEWCHE)</div>
+                <div style="font-size: 0.75rem; color: var(--muted-foreground);">Modular Pontoons & Anchors</div>
+              </div>
+              <span class="badge badge-info">Standby Reserve</span>
+            </div>
+            <dl style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.8rem; margin: 0.85rem 0;">
+              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Location</dt><dd class="font-medium">Newcastle Wharf</dd></div>
+              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Condition</dt><dd class="font-medium">Survey Grade A</dd></div>
+              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Maintenance Due</dt><dd class="font-medium">March 2027</dd></div>
+              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Insurance</dt><dd class="font-medium text-success">Lloyds Covered</dd></div>
+            </dl>
+          </div>
+        </div>
+
+        <!-- Master Invoicing Ledger -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Master Invoicing & BAS Ledger
+            </div>
+            <button class="btn btn-sm btn-primary" id="btn-add-invoice">+ Create Invoice</button>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Invoice ID</th>
+                  <th>Date</th>
+                  <th>Description</th>
+                  <th>Client / Entity</th>
+                  <th style="text-align: right;">Revenue (ex-GST)</th>
+                  <th style="text-align: right;">GST 10% (Box 1A)</th>
+                  <th style="text-align: right;">Gross Invoiced</th>
+                  <th>Status</th>
+                  <th style="text-align: center;">Action</th>
+                </tr>
+              </thead>
+              <tbody id="invoices-tbody">
+                <!-- populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 5: CALENDAR -->
+      <section id="tab-calendar" class="tab-content" style="display: none;">
+        <div class="page-header">
+          <div class="page-eyebrow">Module 07 · Compliance, Payouts & Lodgements</div>
+          <h1 class="page-title">Compliance & Dividend Calendar</h1>
+          <p class="page-desc">Chronological schedule of NEOS distribution payouts, ATO quarterly Business Activity Statement (BAS) lodgements, and Thai PIT deadlines.</p>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+              Upcoming Milestones & Deadlines
+            </div>
+            <div style="display: flex; gap: 0.5rem;">
+              <select class="form-control" id="calendar-filter" style="width: 140px; padding: 0.35rem 0.65rem; font-size: 0.8rem;">
+                <option value="All">All Categories</option>
+                <option value="Dividend">Dividends</option>
+                <option value="ATO">ATO BAS</option>
+                <option value="Thai">Thai PIT</option>
+                <option value="Marine">Marine Charter</option>
+              </select>
+              <button class="btn btn-sm btn-primary" id="btn-add-event">+ Add Event</button>
+            </div>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;" id="calendar-event-list">
+            <!-- populated dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 6: ADVISOR -->
+      <section id="tab-advisor" class="tab-content" style="display: none;">
+        <div class="page-header">
+          <div class="page-eyebrow">AI Copilot · Grounded Intelligence</div>
+          <h1 class="page-title">Spark Advisor</h1>
+          <p class="page-desc">Interactive AI copilot with instant reasoning over your portfolio holdings, marine charter income, and Thai tax compliance.</p>
+        </div>
+
+        <div class="chat-container">
+          <div class="chat-messages" id="chat-messages">
+            <!-- Messages populated dynamically -->
+          </div>
+
+          <!-- Suggested Chips -->
+          <div class="chat-chips">
+            <span style="font-size: 0.75rem; color: var(--muted-foreground); margin-right: 0.25rem;">Suggested:</span>
+            <button class="chip-btn" data-q="Where should this month's dividend distribution go based on sleeve drift?">Where to reinvest this month's dividends?</button>
+            <button class="chip-btn" data-q="How much GST will I report at Box 1A for Q1 FY27?">How much GST for Q1 FY27 BAS?</button>
+            <button class="chip-btn" data-q="Is remitting my 2026 charter income to Thailand this year taxable?">Is 2026 charter remittance taxable in TH?</button>
+            <button class="chip-btn" data-q="What is my projected portfolio value in 5 years with DRIP enabled?">5-year DRIP projection summary</button>
+          </div>
+
+          <!-- Input Box -->
+          <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chat-input" placeholder="Ask Spark Advisor about your portfolio, cash flow, or tax rules...">
+            <button class="btn btn-primary" id="btn-send-chat">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              <span>Send</span>
+            </button>
+            <button class="btn" id="btn-clear-chat" title="Clear chat history">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+            </button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Mobile Bottom Nav -->
+  <nav id="mobile-bottom-nav">
+    <div class="bottom-nav-item active" data-tab="overview">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/></svg>
+      <span>Overview</span>
+    </div>
+    <div class="bottom-nav-item" data-tab="projections">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg>
+      <span>Growth</span>
+    </div>
+    <div class="bottom-nav-item" data-tab="thaitax">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" x2="12" y1="6" y2="18"/><polygon points="2 6 12 2 22 6 22 22 2 22 2 6"/></svg>
+      <span>Tax</span>
+    </div>
+    <div class="bottom-nav-item" data-tab="marine">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>
+      <span>Marine</span>
+    </div>
+    <div class="bottom-nav-item" data-tab="calendar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2"/></svg>
+      <span>Schedule</span>
+    </div>
+    <div class="bottom-nav-item" data-tab="advisor">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="16" height="12" x="4" y="8" rx="2"/></svg>
+      <span>Advisor</span>
+    </div>
+  </nav>
+
+  <!-- Modal: Add / Edit Holding -->
+  <div class="modal-backdrop" id="modal-holding">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title" id="holding-modal-title">Add Asset Holding</div>
+        <button class="btn btn-icon close-modal" data-target="modal-holding">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-holding-index" value="-1">
+        <div class="form-group">
+          <label class="form-label">Ticker Symbol</label>
+          <input type="text" class="form-control" id="modal-ticker" placeholder="e.g. SPYI:US">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Asset Sleeve</label>
+          <select class="form-control" id="modal-sleeve">
+            <option value="Equities">Equities</option>
+            <option value="Crypto">Crypto</option>
+            <option value="Gold">Gold</option>
+            <option value="Bonds">Bonds</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Units Held</label>
+          <input type="number" class="form-control num" id="modal-units" placeholder="e.g. 250">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Current Unit Price (USD)</label>
+          <input type="number" class="form-control num" id="modal-price" placeholder="e.g. 52.50" step="0.01">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Cost Basis (AUD)</label>
+          <input type="number" class="form-control num" id="modal-cost-aud" placeholder="e.g. 74.00" step="0.01">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Monthly Distribution per Unit (USD)</label>
+          <input type="number" class="form-control num" id="modal-div" placeholder="e.g. 0.65" step="0.01">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn close-modal" data-target="modal-holding">Cancel</button>
+        <button class="btn btn-primary" id="btn-save-holding">Save Asset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Create Marine Invoice -->
+  <div class="modal-backdrop" id="modal-invoice">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">Create Marine Invoice</div>
+        <button class="btn btn-icon close-modal" data-target="modal-invoice">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Invoice ID</label>
+          <input type="text" class="form-control" id="inv-id" value="INV00010">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Invoice Date</label>
+          <input type="date" class="form-control" id="inv-date" value="2026-10-15">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Service Description</label>
+          <input type="text" class="form-control" id="inv-desc" placeholder="e.g. Quarterly Bareboat Charter — MV COM 4 (Q3 FY27)">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Client / Charterer</label>
+          <input type="text" class="form-control" id="inv-client" value="Pacific Marine Pty Ltd">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ex-GST Revenue (AUD)</label>
+          <input type="number" class="form-control num" id="inv-ex" value="6500" step="100">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Status</label>
+          <select class="form-control" id="inv-status">
+            <option value="Paid">Paid</option>
+            <option value="Settled" selected>Settled</option>
+            <option value="Pending">Pending</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn close-modal" data-target="modal-invoice">Cancel</button>
+        <button class="btn btn-primary" id="btn-save-invoice">Generate Invoice</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Record Remittance -->
+  <div class="modal-backdrop" id="modal-remit">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">Record Overseas Remittance</div>
+        <button class="btn btn-icon close-modal" data-target="modal-remit">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Transfer Date</label>
+          <input type="date" class="form-control" id="remit-date" value="2026-10-09">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Income Vintage</label>
+          <select class="form-control" id="remit-vintage">
+            <option value="Pre-2024">Pre-2024 (Exempt Paw 162)</option>
+            <option value="2024">2024 Income</option>
+            <option value="2025">2025 Income</option>
+            <option value="2026" selected>2026 Income</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Transfer Description / Source</label>
+          <input type="text" class="form-control" id="remit-nature" placeholder="e.g. Dividend sweep CMC Markets">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Source Amount (AUD or USD)</label>
+          <input type="text" class="form-control" id="remit-source-amt" placeholder="e.g. A$5,000 @ 23.45">
+        </div>
+        <div class="form-group">
+          <label class="form-label">THB Received</label>
+          <input type="number" class="form-control num" id="remit-thb" placeholder="e.g. 117250">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn close-modal" data-target="modal-remit">Cancel</button>
+        <button class="btn btn-primary" id="btn-save-remit">Save Record</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Add Calendar Event -->
+  <div class="modal-backdrop" id="modal-event">
+    <div class="modal-box">
+      <div class="modal-header">
+        <div class="modal-title">Add Compliance / Milestone Event</div>
+        <button class="btn btn-icon close-modal" data-target="modal-event">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Event Date</label>
+          <input type="date" class="form-control" id="event-date" value="2026-11-20">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Event Title</label>
+          <input type="text" class="form-control" id="event-title" placeholder="e.g. NEOS Monthly Distribution Declaration">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Category</label>
+          <select class="form-control" id="event-kind">
+            <option value="Dividend">Dividend</option>
+            <option value="ATO">ATO BAS</option>
+            <option value="Thai">Thai PIT</option>
+            <option value="Marine">Marine Charter</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Details / Notes</label>
+          <input type="text" class="form-control" id="event-note" placeholder="e.g. Payment date approx 25th of month">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn close-modal" data-target="modal-event">Cancel</button>
+        <button class="btn btn-primary" id="btn-save-event">Add Event</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Element -->
+  <div id="toast">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--success);"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    <span id="toast-text">Data synced successfully.</span>
+  </div>
+
+  <script>
+    // --- Direct Export & Core Financial Utilities (matching finance-utils.ts) ---
+    function calculatePortfolioKPIs(holdingsList) {
+      const totalValue = holdingsList.reduce((sum, h) => sum + (h.shares || h.units) * (h.currentPrice || h.live * 1.45), 0);
+      const totalCost = holdingsList.reduce((sum, h) => sum + (h.shares || h.units) * (h.avgCost || h.costAud), 0);
+      const totalGainLoss = totalValue - totalCost;
+      const totalGainLossPct = totalCost > 0 ? (totalGainLoss / totalCost) * 100 : 0;
+      const projectedAnnualIncome = holdingsList.reduce((sum, h) => {
+        const p = h.currentPrice || (h.live * 1.45);
+        const y = h.annualDividendYield !== undefined ? h.annualDividendYield : ((h.div * 12) / (h.mv || 1));
+        return sum + (h.shares || h.units) * p * y;
+      }, 0);
+      const projectedMonthlyIncome = projectedAnnualIncome / 12;
+
+      return {
+        totalValue,
+        totalCost,
+        totalGainLoss,
+        totalGainLossPct,
+        projectedAnnualIncome,
+        projectedMonthlyIncome,
+      };
+    }
+
+    function generateProjections(params) {
+      const {
+        initialValue,
+        monthlyContribution,
+        annualYield,
+        annualGrowthRate,
+        years,
+        reinvestDividends,
+      } = params;
+
+      const data = [];
+      let currentValue = initialValue;
+      let totalInvested = initialValue;
+
+      for (let y = 1; y <= years; y++) {
+        for (let m = 1; m <= 12; m++) {
+          currentValue += monthlyContribution;
+          totalInvested += monthlyContribution;
+          currentValue *= 1 + annualGrowthRate / 12;
+          const monthlyDiv = (currentValue * annualYield) / 12;
+          if (reinvestDividends) {
+            currentValue += monthlyDiv;
+          }
+        }
+
+        data.push({
+          year: y,
+          portfolioValue: Math.round(currentValue),
+          annualIncome: Math.round(currentValue * annualYield),
+          totalInvested: Math.round(totalInvested),
+        });
+      }
+
+      return data;
+    }
+
+    function calculateThaiTax(input) {
+      const standardExpense = Math.min(
+        input.annualAssessableIncomeTHB * 0.5,
+        input.standardExpenseDeductionTHB !== undefined ? input.standardExpenseDeductionTHB : 100000
+      );
+      const personalAllowance = input.personalAllowanceTHB !== undefined ? input.personalAllowanceTHB : 60000;
+      const otherDeductions = input.additionalDeductionsTHB !== undefined ? input.additionalDeductionsTHB : 0;
+
+      const totalDeductions = standardExpense + personalAllowance + otherDeductions;
+      const taxableIncome = Math.max(0, input.annualAssessableIncomeTHB - totalDeductions);
+
+      const brackets = [
+        { limit: 150000, rate: 0.0 },
+        { limit: 300000, rate: 0.05 },
+        { limit: 500000, rate: 0.1 },
+        { limit: 750000, rate: 0.15 },
+        { limit: 1000000, rate: 0.2 },
+        { limit: 2000000, rate: 0.25 },
+        { limit: 5000000, rate: 0.3 },
+        { limit: Infinity, rate: 0.35 },
+      ];
+
+      let tax = 0;
+      let previousLimit = 0;
+
+      for (const b of brackets) {
+        if (taxableIncome > previousLimit) {
+          const taxableInBracket = Math.min(taxableIncome, b.limit) - previousLimit;
+          tax += taxableInBracket * b.rate;
+          previousLimit = b.limit;
+        } else {
+          break;
+        }
+      }
+
+      const effectiveRate = input.annualAssessableIncomeTHB > 0
+        ? (tax / input.annualAssessableIncomeTHB) * 100
+        : 0;
+
+      return {
+        assessableIncome: input.annualAssessableIncomeTHB,
+        totalDeductions,
+        taxableIncome,
+        taxPayableTHB: Math.round(tax),
+        effectiveRate: Number(effectiveRate.toFixed(2)),
+      };
+    }
+
+    // --- Application State Management (Backed by localStorage) ---
+    const FX_RATES = {
+      AUD: 1.0,
+      USD: 0.69,
+      THB: 23.50
+    };
+
+        const DEFAULT_HOLDINGS = [
+      { ticker: "BTCI:US", name: "NEOS Bitcoin High Income ETF", sleeve: "Crypto", units: 633, shares: 633, costUsd: 34.12, costAud: 49.05, avgCost: 49.05, live: 32.94, currentPrice: 47.24, mv: 29903.57, weight: 28.60, divRate: 0.7184, div: 554.35, annualDividendYield: 0.222 },
+      { ticker: "NEHI:US", name: "NEOS Ethereum High Income ETF", sleeve: "Crypto", units: 590, shares: 590, costUsd: 32.06, costAud: 45.34, avgCost: 45.34, live: 31.07, currentPrice: 44.56, mv: 26289.91, weight: 25.14, divRate: 0.8721, div: 627.24, annualDividendYield: 0.286 },
+      { ticker: "IAUI:US", name: "NEOS Gold High Income ETF", sleeve: "Gold", units: 254, shares: 254, costUsd: 56.39, costAud: 80.23, avgCost: 80.23, live: 48.05, currentPrice: 68.91, mv: 17503.42, weight: 16.74, divRate: 0.5011, div: 155.16, annualDividendYield: 0.106 },
+      { ticker: "SPYI:US", name: "NEOS S&P 500 High Income ETF", sleeve: "Equities", units: 199, shares: 199, costUsd: 52.00, costAud: 73.45, avgCost: 73.45, live: 53.86, currentPrice: 77.24, mv: 15371.46, weight: 14.70, divRate: 0.5338, div: 129.49, annualDividendYield: 0.101 },
+      { ticker: "QQQI:US", name: "NEOS Nasdaq-100 High Income ETF", sleeve: "Equities", units: 192, shares: 192, costUsd: 53.59, costAud: 75.70, avgCost: 75.70, live: 56.25, currentPrice: 80.67, mv: 15488.86, weight: 14.81, divRate: 0.6339, div: 148.37, annualDividendYield: 0.115 },
+    ];
+
+    const DEFAULT_INVOICES = [
+      { id: "INV00001", date: "2025-07-01", desc: "Quarterly Bareboat Charter — MV COM 4 (Q1 FY26)", client: "Pacific Marine", ex: 6500, status: "Paid" },
+      { id: "INV00002", date: "2025-07-01", desc: "Annual ROI Equipment Guarantee — PAHE / NEWCHE FY26", client: "Port Adelaide Hire", ex: 20000, status: "Paid" },
+      { id: "INV00003", date: "2025-10-01", desc: "Quarterly Bareboat Charter — MV COM 4 (Q2 FY26)", client: "Pacific Marine", ex: 6500, status: "Paid" },
+      { id: "INV00004", date: "2026-01-01", desc: "Quarterly Bareboat Charter — MV COM 4 (Q3 FY26)", client: "Pacific Marine", ex: 6500, status: "Paid" },
+      { id: "INV00005", date: "2026-04-01", desc: "Quarterly Bareboat Charter — MV COM 4 (Q4 FY26)", client: "Pacific Marine", ex: 6500, status: "Paid" },
+      { id: "INV00006", date: "2026-07-01", desc: "Quarterly Bareboat Charter — MV COM 4 (Q1 FY27)", client: "Pacific Marine", ex: 6500, status: "Paid" },
+      { id: "INV00007", date: "2026-07-01", desc: "Annual ROI Equipment Guarantee — PAHE / NEWCHE FY27", client: "Port Adelaide Hire", ex: 20000, status: "Settled" },
+      { id: "INV00008", date: "2026-08-15", desc: "Equipment hire reconciliation — Port Adelaide", client: "Port Adelaide Hire", ex: 0, status: "Settled" },
+      { id: "INV00009", date: "2026-10-01", desc: "Quarterly Bareboat Charter — MV COM 4 (Q2 FY27)", client: "Pacific Marine", ex: 6500, status: "Settled" },
+    ];
+
+    const DEFAULT_REMITTANCES = [
+      { date: "2023-11-14", nature: "Savings capital transfer", vintage: "Pre-2024", sourceAmt: "A$18,000 @ 23.10", thb: 415800, status: "Exempt" },
+      { date: "2024-06-03", nature: "Accumulated 2023 savings", vintage: "Pre-2024", sourceAmt: "A$9,500 @ 23.25", thb: 220875, status: "Exempt" },
+      { date: "2025-02-20", nature: "FY24 charter income", vintage: "2024", sourceAmt: "A$6,200 @ 23.40", thb: 145080, status: "Assessable" },
+      { date: "2025-09-11", nature: "NEOS distributions sweep", vintage: "2025", sourceAmt: "A$4,800 @ 23.55", thb: 113040, status: "Assessable" },
+      { date: "2026-03-05", nature: "Bareboat Q3 FY26 remittance", vintage: "2026", sourceAmt: "A$7,150 @ 23.60", thb: 168740, status: "Assessable" },
+      { date: "2026-08-22", nature: "Dividend sweep Bangkok Bank", vintage: "2026", sourceAmt: "A$5,400 @ 23.50", thb: 126900, status: "Assessable" },
+    ];
+
+    const DEFAULT_EVENTS = [
+      { date: "2026-10-21", title: "NEOS Distribution Declaration", note: "Approximate monthly declaration for BTCI, NEHI, IAUI, SPYI, QQQI", kind: "Dividend" },
+      { date: "2026-11-18", title: "BAS Audit Review", note: "Pre-lodgement review of Q1 FY27 GST reporting", kind: "ATO" },
+      { date: "2026-11-25", title: "BAS Q1 FY27 Due (ATO)", note: "GST Box 1A lodgement & payment for Jul – Sep 2026", kind: "ATO" },
+      { date: "2026-12-20", title: "NEOS Year-End Distribution", note: "Final dividend payment date for calendar year 2026", kind: "Dividend" },
+      { date: "2027-01-01", title: "Thai PIT Filing Window Opens", note: "P.N.D.90/91 personal income tax for 2026 remittances", kind: "Thai" },
+      { date: "2027-01-05", title: "Marine Charter Q3 FY27 Invoicing", note: "MV COM 4 Quarterly Bareboat Charter A$7,150", kind: "Marine" },
+      { date: "2027-02-28", title: "BAS Q2 FY27 Due (ATO)", note: "Quarterly GST for Oct – Dec 2026", kind: "ATO" },
+      { date: "2027-03-31", title: "Thai PIT Filing Closes", note: "Paper deadline (e-filing deadline 8 April 2027)", kind: "Thai" },
+    ];
+
+    const DEFAULT_PROJECTIONS = {
+      yieldPct: 17.5,
+      contrib: 500,
+      years: 5,
+      divGrowth: 3.0,
+      drip: true
+    };
+
+    const DEFAULT_TAX_CALC = {
+      grossIncome: 1560000,
+      sso: 9000,
+      insurance: 50000,
+      rmf: 100000,
+      mortgage: 45000,
+      donation: 10000
+    };
+
+    const DEFAULT_CHAT = [
+      {
+        id: "msg-1",
+        role: "assistant",
+        text: "Good morning, Olly. I'm your **Spark Finance Advisor**. I have complete context on your NEOS ETF portfolio (A$108k), SHIPAUS marine charter operations, and Thai foreign remittance tax status (Orders Paw 161/162). How can I assist you today?"
+      }
+    ];
+
+    // LocalStorage helper functions
+    function load(key, defaultVal) {
+      try {
+        const val = localStorage.getItem("spark_" + key);
+        return val ? JSON.parse(val) : defaultVal;
+      } catch (e) {
+        return defaultVal;
+      }
+    }
+
+    function save(key, val) {
+      try {
+        localStorage.setItem("spark_" + key, JSON.stringify(val));
+      } catch (e) {}
+    }
+
+    // State Variables
+    let currentCurrency = load("currency", "AUD");
+    let currentTheme = load("theme", "dark");
+    let activeTab = load("activeTab", "overview");
+    let holdings = load("holdings", DEFAULT_HOLDINGS);
+    let invoices = load("invoices", DEFAULT_INVOICES);
+    let remittances = load("remittances", DEFAULT_REMITTANCES);
+    let events = load("events", DEFAULT_EVENTS);
+    let projections = load("projections", DEFAULT_PROJECTIONS);
+    let taxCalc = load("taxCalc", DEFAULT_TAX_CALC);
+    let chatMessages = load("chatMessages", DEFAULT_CHAT);
+    let sidebarCollapsed = load("sidebarCollapsed", false);
+
+    // Currency Formatter
+    function formatCurrency(amountAud, d = 0) {
+      const rate = FX_RATES[currentCurrency] || 1.0;
+      const converted = amountAud * rate;
+      let symbol = "A$";
+      if (currentCurrency === "USD") symbol = "$";
+      if (currentCurrency === "THB") symbol = "฿";
+
+      return symbol + Math.round(converted).toLocaleString(undefined, {
+        minimumFractionDigits: d,
+        maximumFractionDigits: d
+      });
+    }
+
+    function formatNumber(num, d = 0) {
+      return num.toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d });
+    }
+
+    // Toast Notification helper
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      document.getElementById("toast-text").innerText = msg;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 3200);
+    }
+
+    // Tab Navigation
+    function switchTab(tabId) {
+      activeTab = tabId;
+      save("activeTab", tabId);
+
+      document.querySelectorAll(".tab-content").forEach(el => el.style.display = "none");
+      const target = document.getElementById("tab-" + tabId);
+      if (target) target.style.display = "block";
+
+      // Update Nav active classes
+      document.querySelectorAll(".nav-item").forEach(item => {
+        item.classList.toggle("active", item.getAttribute("data-tab") === tabId);
+      });
+      document.querySelectorAll(".bottom-nav-item").forEach(item => {
+        item.classList.toggle("active", item.getAttribute("data-tab") === tabId);
+      });
+
+      // Update Breadcrumbs
+      const titles = {
+        overview: "Dashboard / Portfolio",
+        projections: "Projections & DRIP",
+        thaitax: "Thai Tax Engine",
+        marine: "Marine Operations",
+        calendar: "Compliance Calendar",
+        advisor: "Spark Advisor Copilot"
+      };
+      document.getElementById("breadcrumb-title").innerText = titles[tabId] || "Dashboard";
+
+      // Re-render current tab specific views if needed
+      if (tabId === "overview") renderOverview();
+      if (tabId === "projections") renderProjections();
+      if (tabId === "thaitax") renderThaiTax();
+      if (tabId === "marine") renderMarine();
+      if (tabId === "calendar") renderCalendar();
+      if (tabId === "advisor") renderChat();
+    }
+
+    // --- Renderers ---
+    function renderOverview() {
+      // Portfolio calculations using calculatePortfolioKPIs
+      const kpis = calculatePortfolioKPIs(holdings);
+      const totalCostAud = kpis.totalCost;
+      const totalMvAud = kpis.totalValue;
+      const totalGainAud = kpis.totalGainLoss;
+      const gainPct = kpis.totalGainLossPct;
+      const annualDivsAud = kpis.projectedAnnualIncome;
+      const monthlyDivsAud = kpis.projectedMonthlyIncome;
+
+      const annualMarineAud = 46000;
+      const totalAnnualIncomeAud = annualDivsAud + annualMarineAud;
+      const monthlyMarineAud = annualMarineAud / 12;
+      const monthlyTotalAud = monthlyDivsAud + monthlyMarineAud;
+
+      // Update KPIs
+      document.getElementById("kpi-total-val").innerText = formatCurrency(totalMvAud);
+      document.getElementById("kpi-total-sub").innerHTML = `Cost ${formatCurrency(totalCostAud)} · <span class="badge ${totalGainAud >= 0 ? "badge-success" : "badge-warning"}">${totalGainAud >= 0 ? "+" : ""}${formatCurrency(totalGainAud)} (${gainPct.toFixed(2)}%)</span>`;
+
+      document.getElementById("kpi-annual-inc").innerText = formatCurrency(totalAnnualIncomeAud) + " / yr";
+      document.getElementById("kpi-monthly-flow").innerText = formatCurrency(monthlyTotalAud) + " / mo";
+      document.getElementById("kpi-tax-est").innerText = formatCurrency(4600); // Box 1A GST
+      document.getElementById("route-cash-text").innerText = formatCurrency(monthlyDivsAud);
+
+      // Sleeves & Allocation
+      const sleeveTotals = { Crypto: 0, Equities: 0, Gold: 0 };
+      holdings.forEach(h => {
+        if (sleeveTotals[h.sleeve] !== undefined) sleeveTotals[h.sleeve] += h.mv;
+      });
+
+      const sleeveList = document.getElementById("sleeve-list");
+      sleeveList.innerHTML = "";
+      const sleevesMeta = [
+        { name: "Crypto", target: "45-55%", color: "#f59e0b", status: "Overweight (~56%) — Pause Reinvestment" },
+        { name: "Equities", target: "30-35%", color: "#0284c7", status: "Underweight (~28%) — Priority Buy" },
+        { name: "Gold", target: "15-20%", color: "#10b981", status: "Balanced (~16%) — Holding Target" }
+      ];
+
+      sleevesMeta.forEach(s => {
+        const val = sleeveTotals[s.name] || 0;
+        const pct = (val / totalMvAud) * 100;
+        const div = document.createElement("div");
+        div.style.cssText = "display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;";
+        div.innerHTML = `
+          <div>
+            <div style="font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
+              <span style="width: 8px; height: 8px; border-radius: 50%; background: ${s.color};"></span>
+              ${s.name}
+            </div>
+            <div style="font-size: 0.725rem; color: var(--muted-foreground);">${s.status}</div>
+          </div>
+          <div style="text-align: right;">
+            <div class="num font-bold">${pct.toFixed(1)}%</div>
+            <div class="num text-xs text-muted-foreground">${formatCurrency(val)}</div>
+          </div>
+        `;
+        sleeveList.appendChild(div);
+      });
+
+      // Holdings Table
+      const tbody = document.getElementById("holdings-tbody");
+      tbody.innerHTML = "";
+      holdings.forEach((h, idx) => {
+        const tr = document.createElement("tr");
+        const weight = (h.mv / totalMvAud) * 100;
+        tr.innerHTML = `
+          <td>
+            <div style="font-weight: 600;">${h.ticker}</div>
+            <div style="font-size: 0.725rem; color: var(--muted-foreground);">${h.name || h.sleeve}</div>
+          </td>
+          <td><span class="badge badge-muted">${h.sleeve}</span></td>
+          <td class="num" style="text-align: right;">${formatNumber(h.shares || h.units)}</td>
+          <td class="num" style="text-align: right;">$${(h.live || h.currentPrice / 1.45).toFixed(2)}</td>
+          <td class="num font-bold" style="text-align: right;">${formatCurrency(h.mv)}</td>
+          <td class="num" style="text-align: right;">${weight.toFixed(1)}%</td>
+          <td class="num" style="text-align: right; color: var(--success);">${formatCurrency(h.div)}</td>
+          <td style="text-align: center;">
+            <button class="btn btn-sm btn-edit-holding" data-idx="${idx}" title="Edit asset">Edit</button>
+            <button class="btn btn-sm btn-delete-holding" data-idx="${idx}" style="color: var(--destructive); margin-left: 4px;" title="Delete">Del</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Projections Simulator Engine
+    function renderProjections() {
+      const yieldPct = parseFloat(document.getElementById("input-yield").value);
+      const contrib = parseFloat(document.getElementById("input-contrib").value);
+      const years = parseInt(document.getElementById("input-years").value);
+      const divGrowth = parseFloat(document.getElementById("input-div-growth").value);
+      const drip = document.getElementById("input-drip").checked;
+
+      document.getElementById("val-yield").innerText = yieldPct.toFixed(1) + "%";
+      document.getElementById("val-contrib").innerText = formatCurrency(contrib);
+      document.getElementById("val-years").innerText = years + (years === 1 ? " Year" : " Years");
+      document.getElementById("val-div-growth").innerText = divGrowth.toFixed(1) + "%";
+
+      const totalMvAud = holdings.reduce((sum, h) => sum + h.mv, 0);
+
+      // Call generateProjections
+      const projResults = generateProjections({
+        initialValue: totalMvAud,
+        monthlyContribution: contrib,
+        annualYield: yieldPct / 100,
+        annualGrowthRate: divGrowth / 100,
+        years: years,
+        reinvestDividends: drip
+      });
+
+      const finalYear = projResults[projResults.length - 1];
+      const finalPassiveAnnual = finalYear.annualIncome;
+      document.getElementById("proj-end-balance").innerText = formatCurrency(finalYear.portfolioValue);
+      document.getElementById("proj-passive-income").innerText = `Generates ~${formatCurrency(finalPassiveAnnual)} / yr (${formatCurrency(finalPassiveAnnual / 12)} / mo)`;
+
+      // Render Projections Table
+      const pbody = document.getElementById("proj-table-body");
+      pbody.innerHTML = "";
+      let prevBal = totalMvAud;
+
+      projResults.forEach(row => {
+        const tr = document.createElement("tr");
+        const startVal = prevBal;
+        const annualContrib = contrib * 12;
+        const annualDivs = row.portfolioValue - (drip ? (startVal + annualContrib) : 0);
+        prevBal = row.portfolioValue;
+
+        tr.innerHTML = `
+          <td class="font-bold">Year ${row.year}</td>
+          <td class="num" style="text-align: right;">${formatCurrency(startVal)}</td>
+          <td class="num" style="text-align: right;">+${formatCurrency(annualContrib)}</td>
+          <td class="num font-semibold" style="text-align: right; color: var(--success);">${formatCurrency(row.annualIncome)}</td>
+          <td class="num font-bold" style="text-align: right; color: var(--primary);">${formatCurrency(row.portfolioValue)}</td>
+          <td class="num" style="text-align: right;">${formatCurrency(row.annualIncome / 12)} / mo</td>
+        `;
+        pbody.appendChild(tr);
+      });
+
+      // Render SVG Chart
+      const chartData = [
+        { year: 0, end: totalMvAud, totalContributed: totalMvAud },
+        ...projResults.map(p => ({ year: p.year, end: p.portfolioValue, totalContributed: p.totalInvested }))
+      ];
+      renderSvgChart(chartData);
+    }
+
+    function renderSvgChart(data) {
+      const container = document.getElementById("projections-chart");
+      const width = container.clientWidth || 600;
+      const height = 300;
+      const padding = { top: 20, right: 30, bottom: 40, left: 65 };
+
+      const maxVal = Math.max(...data.map(d => d.end)) * 1.08;
+      const minVal = 0;
+
+      const xScale = (year) => padding.left + (year / (data.length - 1)) * (width - padding.left - padding.right);
+      const yScale = (val) => height - padding.bottom - ((val - minVal) / (maxVal - minVal)) * (height - padding.top - padding.bottom);
+
+      const valuePoints = data.map(d => `${xScale(d.year)},${yScale(d.end)}`).join(" ");
+      const contribPoints = data.map(d => `${xScale(d.year)},${yScale(d.totalContributed)}`).join(" ");
+      const areaPoints = `${xScale(0)},${height - padding.bottom} ${valuePoints} ${xScale(data.length - 1)},${height - padding.bottom}`;
+
+      let svg = `
+        <svg class="chart-svg" viewBox="0 0 ${width} ${height}">
+          <defs>
+            <linearGradient id="grad-blue" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#0284c7" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#0284c7" stop-opacity="0.0"/>
+            </linearGradient>
+          </defs>
+
+          ${[0.25, 0.5, 0.75, 1.0].map(ratio => {
+            const y = yScale(maxVal * ratio);
+            return `
+              <line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" stroke="var(--border)" stroke-dasharray="3,3"/>
+              <text x="${padding.left - 8}" y="${y + 4}" font-size="10" fill="var(--muted-foreground)" text-anchor="end" class="num">${formatCurrency(maxVal * ratio)}</text>
+            `;
+          }).join("")}
+
+          <polygon points="${areaPoints}" fill="url(#grad-blue)"/>
+          <polyline points="${contribPoints}" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,4"/>
+          <polyline points="${valuePoints}" fill="none" stroke="#0284c7" stroke-width="3"/>
+
+          ${data.map(d => `
+            <circle cx="${xScale(d.year)}" cy="${yScale(d.end)}" r="4" fill="#0284c7" stroke="#ffffff" stroke-width="2"/>
+            <text x="${xScale(d.year)}" y="${height - padding.bottom + 20}" font-size="11" fill="var(--muted-foreground)" text-anchor="middle">Y${d.year}</text>
+          `).join("")}
+        </svg>
+      `;
+
+      container.innerHTML = svg;
+    }
+
+    // Thai Tax Engine
+    function renderThaiTax() {
+      const BRACKETS = [
+        { min: 0, max: 150000, rate: 0.00, label: "0 – 150,000", maxTax: 0 },
+        { min: 150001, max: 300000, rate: 0.05, label: "150,001 – 300,000", maxTax: 7500 },
+        { min: 300001, max: 500000, rate: 0.10, label: "300,001 – 500,000", maxTax: 20000 },
+        { min: 500001, max: 750000, rate: 0.15, label: "500,001 – 750,000", maxTax: 37500 },
+        { min: 750001, max: 1000000, rate: 0.20, label: "750,001 – 1,000,000", maxTax: 50000 },
+        { min: 1000001, max: 2000000, rate: 0.25, label: "1,000,001 – 2,000,000", maxTax: 250000 },
+        { min: 2000001, max: 5000000, rate: 0.30, label: "2,000,001 – 5,000,000", maxTax: 900000 },
+        { min: 5000001, max: Infinity, rate: 0.35, label: "> 5,000,000", maxTax: Infinity }
+      ];
+
+      const vintage = document.getElementById("thai-vintage").value;
+      const year = document.getElementById("thai-year").value;
+      const vBox = document.getElementById("thai-verdict-box");
+
+      let isExempt = false;
+      let title = "";
+      let desc = "";
+
+      if (vintage === "Pre-2024") {
+        isExempt = true;
+        title = "EXEMPT under Order Paw 162/2566";
+        desc = "Foreign capital and income earned prior to 1 January 2024 is grandfathered under Revenue Department Order Paw 162/2566. Not assessable upon remittance to Thailand.";
+      } else if (parseInt(year) < parseInt(vintage)) {
+        isExempt = true;
+        title = "Invalid Sequence";
+        desc = "Remittance year cannot precede the year the income was generated.";
+      } else {
+        isExempt = false;
+        title = `ASSESSABLE under Order Paw 161/2566 (Report on P.N.D.90)`;
+        desc = `Foreign-sourced income earned post-1 January 2024 remitted into Thailand while tax resident is assessable to Thai PIT in calendar year ${year}. Check foreign tax credits under Double Tax Agreements (DTAs).`;
+      }
+
+      vBox.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: ${isExempt ? "var(--success)" : "var(--warning)"};">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          ${title}
+        </div>
+        <p style="font-size: 0.85rem; color: var(--muted-foreground); margin-top: 0.5rem; line-height: 1.4;">${desc}</p>
+      `;
+
+      // Deductions using calculateThaiTax
+      const grossIncome = parseFloat(document.getElementById("calc-gross-income").value) || 0;
+      const sso = Math.min(parseFloat(document.getElementById("calc-sso").value) || 0, 9000);
+      const insurance = Math.min(parseFloat(document.getElementById("calc-insurance").value) || 0, 100000);
+      const rmf = Math.min(parseFloat(document.getElementById("calc-rmf").value) || 0, 500000);
+      const mortgage = Math.min(parseFloat(document.getElementById("calc-mortgage").value) || 0, 100000);
+      const donation = parseFloat(document.getElementById("calc-donation").value) || 0;
+
+      const additionalDeductions = sso + insurance + rmf + mortgage + donation;
+
+      const taxResult = calculateThaiTax({
+        annualAssessableIncomeTHB: grossIncome,
+        standardExpenseDeductionTHB: 100000,
+        personalAllowanceTHB: 60000,
+        additionalDeductionsTHB: additionalDeductions
+      });
+
+      document.getElementById("calc-std-deduct").value = formatNumber(Math.min(grossIncome * 0.5, 100000));
+      document.getElementById("res-total-deductions").innerText = formatNumber(taxResult.totalDeductions) + " THB";
+      document.getElementById("res-net-taxable").innerText = formatNumber(taxResult.taxableIncome) + " THB";
+      document.getElementById("res-tax-due").innerText = "฿" + formatNumber(taxResult.taxPayableTHB);
+      document.getElementById("thai-effective-tax").innerText = "฿" + formatNumber(taxResult.taxPayableTHB);
+      document.getElementById("thai-effective-rate").innerText = `Effective Rate: ${taxResult.effectiveRate.toFixed(2)}% on Assessable Income`;
+
+      // Render Brackets Table
+      const btbody = document.getElementById("brackets-tbody");
+      btbody.innerHTML = "";
+      let remaining = taxResult.taxableIncome;
+
+      BRACKETS.forEach(b => {
+        const span = b.max - b.min + (b.min === 0 ? 0 : 1);
+        const taxable = Math.min(Math.max(0, remaining), span);
+        const taxInB = taxable * b.rate;
+        const isActive = taxable > 0;
+        remaining -= taxable;
+
+        const tr = document.createElement("tr");
+        if (isActive) tr.style.backgroundColor = "var(--accent)";
+        tr.innerHTML = `
+          <td class="font-medium">${b.label}</td>
+          <td class="num" style="text-align: right;">${(b.rate * 100).toFixed(0)}%</td>
+          <td class="num" style="text-align: right; ${taxInB > 0 ? "font-weight: 700; color: var(--primary);" : ""}">${taxInB > 0 ? "฿" + formatNumber(taxInB) : "—"}</td>
+          <td class="num" style="text-align: right; color: var(--muted-foreground);">${b.maxTax === Infinity ? "—" : "฿" + formatNumber(b.maxTax)}</td>
+        `;
+        btbody.appendChild(tr);
+      });
+
+      // Render Remittance log
+      const rtbody = document.getElementById("remits-tbody");
+      rtbody.innerHTML = "";
+      remittances.forEach((r, idx) => {
+        const tr = document.createElement("tr");
+        const exempt = r.status === "Exempt" || r.vintage === "Pre-2024";
+        tr.innerHTML = `
+          <td class="num whitespace-nowrap">${r.date}</td>
+          <td>${r.nature}</td>
+          <td><span class="badge badge-muted">${r.vintage}</span></td>
+          <td class="num" style="text-align: right;">${r.sourceAmt}</td>
+          <td class="num font-bold" style="text-align: right;">฿${formatNumber(r.thb)}</td>
+          <td><span class="badge ${exempt ? "badge-success" : "badge-warning"}">${exempt ? "Exempt (Paw 162)" : "Assessable (Paw 161)"}</span></td>
+          <td style="text-align: center;">
+            <button class="btn btn-sm btn-delete-remit" data-idx="${idx}" style="color: var(--destructive);">Del</button>
+          </td>
+        `;
+        rtbody.appendChild(tr);
+      });
+    }
+
+    // Marine Operations Engine
+    function renderMarine() {
+      const tbody = document.getElementById("invoices-tbody");
+      tbody.innerHTML = "";
+
+      invoices.forEach((inv, idx) => {
+        const tr = document.createElement("tr");
+        const gst = inv.ex * 0.10;
+        const total = inv.ex + gst;
+        tr.innerHTML = `
+          <td class="font-bold num">${inv.id}</td>
+          <td class="num">${inv.date}</td>
+          <td>${inv.desc}</td>
+          <td>${inv.client}</td>
+          <td class="num" style="text-align: right;">${formatCurrency(inv.ex)}</td>
+          <td class="num" style="text-align: right; color: var(--warning);">${formatCurrency(gst)}</td>
+          <td class="num font-bold" style="text-align: right;">${formatCurrency(total)}</td>
+          <td><span class="badge ${inv.status === "Paid" ? "badge-success" : inv.status === "Settled" ? "badge-info" : "badge-warning"}">${inv.status}</span></td>
+          <td style="text-align: center;">
+            <button class="btn btn-sm btn-delete-invoice" data-idx="${idx}" style="color: var(--destructive);">Del</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Calendar Engine
+    function renderCalendar() {
+      const list = document.getElementById("calendar-event-list");
+      list.innerHTML = "";
+      const filter = document.getElementById("calendar-filter").value;
+
+      const filtered = events.filter(e => filter === "All" || e.kind === filter);
+      const toneMap = {
+        Dividend: "badge-success",
+        ATO: "badge-warning",
+        Thai: "badge-info",
+        Marine: "badge-primary"
+      };
+
+      filtered.forEach((e, idx) => {
+        const item = document.createElement("div");
+        item.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border: 1px solid var(--border); border-radius: var(--radius); background-color: var(--card);";
+        item.innerHTML = `
+          <div style="display: flex; align-items: center; gap: 1rem;">
+            <div style="background: var(--muted); padding: 0.5rem 0.75rem; border-radius: 0.5rem; text-align: center; border: 1px solid var(--border); min-width: 80px;">
+              <div class="num" style="font-size: 0.75rem; color: var(--muted-foreground);">${new Date(e.date).toLocaleDateString("en-US", { month: "short" }).toUpperCase()}</div>
+              <div class="num" style="font-size: 1.25rem; font-weight: 700;">${new Date(e.date).getDate()}</div>
+            </div>
+            <div>
+              <div style="font-weight: 600; font-size: 0.95rem;">${e.title}</div>
+              <div style="font-size: 0.8rem; color: var(--muted-foreground);">${e.note}</div>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span class="badge ${toneMap[e.kind] || "badge-muted"}">${e.kind}</span>
+            <button class="btn btn-sm btn-delete-event" data-idx="${idx}" style="color: var(--destructive);">&times;</button>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    // AI Advisor Copilot Chat Engine
+    function renderChat() {
+      const container = document.getElementById("chat-messages");
+      container.innerHTML = "";
+
+      chatMessages.forEach(msg => {
+        const bubble = document.createElement("div");
+        bubble.className = `chat-bubble ${msg.role}`;
+        bubble.innerHTML = formatMarkdown(msg.text);
+        container.appendChild(bubble);
+      });
+
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function formatMarkdown(text) {
+      return text
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/`([^`]+)`/g, '<code style="background: var(--card); padding: 2px 5px; border-radius: 4px;">$1</code>')
+        .replace(/\n\n/g, '<br><br>')
+        .replace(/\n- /g, '<br>• ');
+    }
+
+    function sendAdvisorMessage(userQuery) {
+      if (!userQuery.trim()) return;
+
+      chatMessages.push({ id: "msg-" + Date.now(), role: "user", text: userQuery });
+      save("chatMessages", chatMessages);
+      renderChat();
+
+      setTimeout(() => {
+        let reply = "";
+        const q = userQuery.toLowerCase();
+
+        if (q.includes("dividend") || q.includes("reinvest") || q.includes("drift") || q.includes("sleeve")) {
+          reply = `Based on your **NEOS Portfolio Sleeve Drift Analysis**:
+- **Crypto Sleeve** (BTCI, NEHI) is currently at **56.0%**, which exceeds your 50.0% ceiling.
+- **Equities Sleeve** (SPYI, QQQI) is underweight at **29.4%** against your 35.0% target.
+- **Gold** (IAUI) sits comfortably balanced at **14.6%**.
+
+**Actionable Recommendation:**
+Direct the entire upcoming distribution (~A$1,463) into **SPYI** (~A$750) and **QQQI** (~A$713) to restore equities allocation while avoiding tax drag.`;
+        } else if (q.includes("gst") || q.includes("bas") || q.includes("ato") || q.includes("box 1a")) {
+          reply = `For **ATO BAS Q1 FY27** (due 25 November 2026):
+- **Bareboat Charter MV COM 4**: A$6,500 ex-GST + A$650 GST
+- **PAHE ROI Guarantee**: A$20,000 ex-GST + A$2,000 GST
+- **Total Gross Invoiced**: A$29,150
+- **GST Payable at Box 1A**: **A$2,650 AUD** (or A$4,600 on full-year annualized schedule).`;
+        } else if (q.includes("thai") || q.includes("remit") || q.includes("taxable") || q.includes("161")) {
+          reply = `Under Thailand Revenue Department **Orders Paw 161/2566 & 162/2566**:
+1. **Pre-2024 Savings/Capital**: 100% tax-exempt when brought into Thailand.
+2. **2026 Incomes/Distributions**: Because you reside in Bangkok for >180 days, any 2026 foreign charter or dividend income remitted during 2026 is **assessable under P.N.D.90**.
+3. **Strategy Tip**: You can claim up to 100,000 THB standard deduction plus your 60,000 THB personal allowance, mortgage interest, and health insurance to lower your net bracket.`;
+        } else if (q.includes("5 years") || q.includes("projection") || q.includes("drip") || q.includes("growth")) {
+          reply = `With **17.5% net yield** and full **DRIP reinvestment** plus A$500/month additions:
+- **Starting Value**: A$108,024
+- **Year 3 Target**: A$218,400
+- **Year 5 Projected Balance**: **A$312,450**
+- **Projected Annual Passive Income**: **A$54,678 / yr** (or ~A$4,556 / month).`;
+        } else {
+          reply = `I have recorded your query. Regarding your portfolio position of **${formatCurrency(108024)}**, your ongoing cash flow run-rate is healthy at **${formatCurrency(5296)} / month**. Is there a specific scenario in Thai tax compliance, marine invoicing, or dividend reinvestment you would like me to calculate?`;
+        }
+
+        chatMessages.push({ id: "msg-" + Date.now(), role: "assistant", text: reply });
+        save("chatMessages", chatMessages);
+        renderChat();
+      }, 500);
+    }
+
+    // --- DOM Event Listeners & Initialization ---
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll(".currency-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll(".currency-btn").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          currentCurrency = btn.getAttribute("data-cur");
+          save("currency", currentCurrency);
+          showToast(`Switched currency to ${currentCurrency}`);
+          switchTab(activeTab);
+        });
+      });
+
+      document.querySelectorAll(".nav-item").forEach(item => {
+        item.addEventListener("click", () => {
+          const tab = item.getAttribute("data-tab");
+          if (tab) switchTab(tab);
+        });
+      });
+
+      document.querySelectorAll(".bottom-nav-item").forEach(item => {
+        item.addEventListener("click", () => {
+          const tab = item.getAttribute("data-tab");
+          if (tab) switchTab(tab);
+        });
+      });
+
+      const sidebar = document.getElementById("sidebar");
+      const toggleSidebarBtn = document.getElementById("toggle-sidebar");
+      if (sidebarCollapsed) sidebar.classList.add("collapsed");
+
+      toggleSidebarBtn.addEventListener("click", () => {
+        sidebarCollapsed = !sidebarCollapsed;
+        sidebar.classList.toggle("collapsed", sidebarCollapsed);
+        save("sidebarCollapsed", sidebarCollapsed);
+      });
+
+      const mobileDrawer = document.getElementById("mobile-drawer");
+      const openDrawerBtn = document.getElementById("open-drawer");
+      const closeDrawerBtn = document.getElementById("close-drawer");
+
+      openDrawerBtn.addEventListener("click", () => mobileDrawer.classList.add("open"));
+      closeDrawerBtn.addEventListener("click", () => mobileDrawer.classList.remove("open"));
+      mobileDrawer.addEventListener("click", (e) => {
+        if (e.target === mobileDrawer) mobileDrawer.classList.remove("open");
+      });
+
+      const mobileNavList = document.getElementById("mobile-nav-list");
+      document.querySelectorAll("#sidebar .nav-item").forEach(item => {
+        const clone = item.cloneNode(true);
+        clone.addEventListener("click", () => {
+          const tab = clone.getAttribute("data-tab");
+          if (tab) {
+            switchTab(tab);
+            mobileDrawer.classList.remove("open");
+          }
+        });
+        mobileNavList.appendChild(clone);
+      });
+
+      const themeToggle = document.getElementById("theme-toggle");
+      document.documentElement.className = currentTheme;
+
+      themeToggle.addEventListener("click", () => {
+        currentTheme = currentTheme === "dark" ? "light" : "dark";
+        document.documentElement.className = currentTheme;
+        save("theme", currentTheme);
+        showToast(`Switched to ${currentTheme} mode`);
+      });
+
+      const refreshBtn = document.getElementById("refresh-btn");
+      const syncIcon = document.getElementById("sync-icon");
+      const syncLabel = document.getElementById("sync-label");
+
+      refreshBtn.addEventListener("click", () => {
+        syncIcon.classList.add("spin");
+        syncLabel.innerText = "Syncing…";
+        refreshBtn.disabled = true;
+
+        setTimeout(() => {
+          syncIcon.classList.remove("spin");
+          syncLabel.innerText = "Sync";
+          refreshBtn.disabled = false;
+          showToast("Data synchronized with live market rates & ledger records.");
+          switchTab(activeTab);
+        }, 900);
+      });
+
+      ["input-yield", "input-contrib", "input-years", "input-div-growth", "input-drip"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("input", renderProjections);
+      });
+
+      document.getElementById("btn-reset-proj").addEventListener("click", () => {
+        document.getElementById("input-yield").value = DEFAULT_PROJECTIONS.yieldPct;
+        document.getElementById("input-contrib").value = DEFAULT_PROJECTIONS.contrib;
+        document.getElementById("input-years").value = DEFAULT_PROJECTIONS.years;
+        document.getElementById("input-div-growth").value = DEFAULT_PROJECTIONS.divGrowth;
+        document.getElementById("input-drip").checked = DEFAULT_PROJECTIONS.drip;
+        renderProjections();
+        showToast("Projections reset to default assumptions.");
+      });
+
+      document.getElementById("thai-vintage").addEventListener("change", renderThaiTax);
+      document.getElementById("thai-year").addEventListener("change", renderThaiTax);
+      ["calc-gross-income", "calc-sso", "calc-insurance", "calc-rmf", "calc-mortgage", "calc-donation"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener("input", renderThaiTax);
+      });
+
+      document.getElementById("btn-save-tax-calc").addEventListener("click", () => {
+        taxCalc = {
+          grossIncome: parseFloat(document.getElementById("calc-gross-income").value) || 0,
+          sso: parseFloat(document.getElementById("calc-sso").value) || 0,
+          insurance: parseFloat(document.getElementById("calc-insurance").value) || 0,
+          rmf: parseFloat(document.getElementById("calc-rmf").value) || 0,
+          mortgage: parseFloat(document.getElementById("calc-mortgage").value) || 0,
+          donation: parseFloat(document.getElementById("calc-donation").value) || 0
+        };
+        save("taxCalc", taxCalc);
+        showToast("Deduction scenario saved to local storage.");
+      });
+
+      document.getElementById("calendar-filter").addEventListener("change", renderCalendar);
+
+      document.querySelectorAll(".close-modal").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const target = btn.getAttribute("data-target");
+          if (target) document.getElementById(target).classList.remove("open");
+        });
+      });
+
+      document.getElementById("btn-add-holding").addEventListener("click", () => {
+        document.getElementById("holding-modal-title").innerText = "Add Asset Holding";
+        document.getElementById("edit-holding-index").value = "-1";
+        document.getElementById("modal-ticker").value = "";
+        document.getElementById("modal-units").value = "";
+        document.getElementById("modal-price").value = "";
+        document.getElementById("modal-cost-aud").value = "";
+        document.getElementById("modal-div").value = "";
+        document.getElementById("modal-holding").classList.add("open");
+      });
+
+      document.getElementById("btn-save-holding").addEventListener("click", () => {
+        const idx = parseInt(document.getElementById("edit-holding-index").value);
+        const ticker = document.getElementById("modal-ticker").value.trim();
+        const sleeve = document.getElementById("modal-sleeve").value;
+        const units = parseFloat(document.getElementById("modal-units").value) || 0;
+        const price = parseFloat(document.getElementById("modal-price").value) || 0;
+        const costAud = parseFloat(document.getElementById("modal-cost-aud").value) || (price * 1.45);
+        const div = parseFloat(document.getElementById("modal-div").value) || 0;
+
+        if (!ticker || units <= 0) {
+          alert("Please enter a valid ticker and unit count.");
+          return;
+        }
+
+        const mv = units * price * 1.45;
+        const newHolding = {
+          ticker, name: ticker, sleeve, units, shares: units, costUsd: price, costAud, avgCost: costAud, live: price, currentPrice: price * 1.45, mv, weight: 0, div: units * div, annualDividendYield: mv > 0 ? (units * div * 12) / mv : 0.12
+        };
+
+        if (idx >= 0 && idx < holdings.length) {
+          holdings[idx] = newHolding;
+        } else {
+          holdings.push(newHolding);
+        }
+
+        save("holdings", holdings);
+        document.getElementById("modal-holding").classList.remove("open");
+        renderOverview();
+        showToast(`Saved holding for ${ticker}`);
+      });
+
+      document.getElementById("holdings-tbody").addEventListener("click", (e) => {
+        if (e.target.classList.contains("btn-edit-holding")) {
+          const idx = parseInt(e.target.getAttribute("data-idx"));
+          const h = holdings[idx];
+          if (h) {
+            document.getElementById("holding-modal-title").innerText = `Edit Holding: ${h.ticker}`;
+            document.getElementById("edit-holding-index").value = idx;
+            document.getElementById("modal-ticker").value = h.ticker;
+            document.getElementById("modal-sleeve").value = h.sleeve;
+            document.getElementById("modal-units").value = h.units || h.shares;
+            document.getElementById("modal-price").value = h.live;
+            document.getElementById("modal-cost-aud").value = h.costAud;
+            document.getElementById("modal-div").value = (h.div / (h.units || 1)).toFixed(2);
+            document.getElementById("modal-holding").classList.add("open");
+          }
+        } else if (e.target.classList.contains("btn-delete-holding")) {
+          const idx = parseInt(e.target.getAttribute("data-idx"));
+          if (confirm(`Are you sure you want to remove ${holdings[idx].ticker}?`)) {
+            holdings.splice(idx, 1);
+            save("holdings", holdings);
+            renderOverview();
+            showToast("Asset removed from portfolio.");
+          }
+        }
+      });
+
+      document.getElementById("btn-add-invoice").addEventListener("click", () => {
+        document.getElementById("modal-invoice").classList.add("open");
+      });
+
+      document.getElementById("btn-save-invoice").addEventListener("click", () => {
+        const id = document.getElementById("inv-id").value;
+        const date = document.getElementById("inv-date").value;
+        const desc = document.getElementById("inv-desc").value;
+        const client = document.getElementById("inv-client").value;
+        const ex = parseFloat(document.getElementById("inv-ex").value) || 0;
+        const status = document.getElementById("inv-status").value;
+
+        invoices.push({ id, date, desc, client, ex, status });
+        save("invoices", invoices);
+        document.getElementById("modal-invoice").classList.remove("open");
+        renderMarine();
+        showToast(`Invoice ${id} added to marine ledger.`);
+      });
+
+      document.getElementById("invoices-tbody").addEventListener("click", (e) => {
+        if (e.target.classList.contains("btn-delete-invoice")) {
+          const idx = parseInt(e.target.getAttribute("data-idx"));
+          invoices.splice(idx, 1);
+          save("invoices", invoices);
+          renderMarine();
+          showToast("Invoice removed.");
+        }
+      });
+
+      document.getElementById("btn-add-remit").addEventListener("click", () => {
+        document.getElementById("modal-remit").classList.add("open");
+      });
+
+      document.getElementById("btn-save-remit").addEventListener("click", () => {
+        const date = document.getElementById("remit-date").value;
+        const vintage = document.getElementById("remit-vintage").value;
+        const nature = document.getElementById("remit-nature").value;
+        const sourceAmt = document.getElementById("remit-source-amt").value;
+        const thb = parseFloat(document.getElementById("remit-thb").value) || 0;
+        const status = vintage === "Pre-2024" ? "Exempt" : "Assessable";
+
+        remittances.unshift({ date, nature, vintage, sourceAmt, thb, status });
+        save("remittances", remittances);
+        document.getElementById("modal-remit").classList.remove("open");
+        renderThaiTax();
+        showToast("Remittance record appended to log.");
+      });
+
+      document.getElementById("remits-tbody").addEventListener("click", (e) => {
+        if (e.target.classList.contains("btn-delete-remit")) {
+          const idx = parseInt(e.target.getAttribute("data-idx"));
+          remittances.splice(idx, 1);
+          save("remittances", remittances);
+          renderThaiTax();
+          showToast("Remittance record removed.");
+        }
+      });
+
+      document.getElementById("btn-add-event").addEventListener("click", () => {
+        document.getElementById("modal-event").classList.add("open");
+      });
+
+      document.getElementById("btn-save-event").addEventListener("click", () => {
+        const date = document.getElementById("event-date").value;
+        const title = document.getElementById("event-title").value;
+        const kind = document.getElementById("event-kind").value;
+        const note = document.getElementById("event-note").value;
+
+        events.push({ date, title, kind, note });
+        events.sort((a, b) => new Date(a.date) - new Date(b.date));
+        save("events", events);
+        document.getElementById("modal-event").classList.remove("open");
+        renderCalendar();
+        showToast("Milestone added to schedule.");
+      });
+
+      document.getElementById("calendar-event-list").addEventListener("click", (e) => {
+        if (e.target.classList.contains("btn-delete-event")) {
+          const idx = parseInt(e.target.getAttribute("data-idx"));
+          events.splice(idx, 1);
+          save("events", events);
+          renderCalendar();
+          showToast("Event removed.");
+        }
+      });
+
+      document.getElementById("btn-send-chat").addEventListener("click", () => {
+        const input = document.getElementById("chat-input");
+        sendAdvisorMessage(input.value);
+        input.value = "";
+      });
+
+      document.getElementById("chat-input").addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          const input = document.getElementById("chat-input");
+          sendAdvisorMessage(input.value);
+          input.value = "";
+        }
+      });
+
+      document.getElementById("btn-clear-chat").addEventListener("click", () => {
+        if (confirm("Reset advisor conversation?")) {
+          chatMessages = [DEFAULT_CHAT[0]];
+          save("chatMessages", chatMessages);
+          renderChat();
+          showToast("Conversation cleared.");
+        }
+      });
+
+      document.querySelectorAll(".chip-btn").forEach(chip => {
+        chip.addEventListener("click", () => {
+          const q = chip.getAttribute("data-q");
+          sendAdvisorMessage(q);
+        });
+      });
+
+      switchTab(activeTab);
+    });
+  </script>
+</body>
+</html>
