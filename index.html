@@ -4,6 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Spark Finance OS — Portfolio & Wealth Dashboard</title>
+  <!-- Progressive Web App (PWA) Manifest & Mobile App Capabilities -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0284c7">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Spark Finance">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <style>
     /* CSS Reset & Design Tokens based on shadcn/ui with Mobile-First Polish */
     :root {
@@ -1216,6 +1225,11 @@
       </div>
 
       <div class="header-right">
+        <!-- PWA Install Button -->
+        <button id="btn-install-pwa" class="btn btn-sm" title="Install Spark Finance on phone or desktop" style="display: inline-flex; align-items: center; gap: 5px; background: var(--primary); color: #ffffff; border: none; font-weight: 600; padding: 0.25rem 0.65rem; border-radius: 9999px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+          <span style="font-size: 0.775rem;">Install</span>
+        </button>
         <!-- Currency Switcher -->
         <div class="currency-switch">
           <button class="currency-btn active" data-cur="AUD">AUD</button>
@@ -2044,6 +2058,69 @@
     </div>
   </div>
 
+  <!-- Modal: Install on Mobile / Android Guide -->
+  <div class="modal-backdrop" id="modal-install-guide">
+    <div class="modal-box" style="max-width: 500px;">
+      <div class="modal-header">
+        <div class="modal-title" style="display: flex; align-items: center; gap: 0.5rem;">
+          <span style="font-size: 1.25rem;">📲</span>
+          <span>Install Spark Finance on Android</span>
+        </div>
+        <button class="btn btn-icon close-modal" data-target="modal-install-guide">&times;</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 1rem; font-size: 0.925rem; line-height: 1.55;">
+        <div style="background: var(--muted); border: 1px solid var(--border); border-radius: var(--radius); padding: 0.85rem 1rem;">
+          <div style="font-weight: 700; color: var(--foreground); margin-bottom: 0.25rem;">Why Chrome asks for manual install:</div>
+          <div style="color: var(--muted-foreground); font-size: 0.85rem;">
+            Android Chrome requires a <strong>manifest.json</strong> and <strong>service worker (sw.js)</strong> on the server to build a WebAPK, or can be added directly via Chrome's menu.
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+          <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+            <div style="width: 26px; height: 26px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0;">1</div>
+            <div>
+              <strong>Tap Chrome 3-Dots (⋮):</strong> In the top-right corner of Chrome on your Android phone, tap the three vertical dots menu.
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+            <div style="width: 26px; height: 26px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0;">2</div>
+            <div>
+              <strong>Select Install:</strong> Tap <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+            <div style="width: 26px; height: 26px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0;">3</div>
+            <div>
+              <strong>Tap "Install" or "Add":</strong> Confirm the prompt. The app installs to your home screen with its custom icon.
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; align-items: flex-start;">
+            <div style="width: 26px; height: 26px; border-radius: 50%; background: var(--success); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; flex-shrink: 0;">✓</div>
+            <div>
+              <strong>Full-Screen Mode:</strong> Once installed, launch it from your home screen. It runs standalone without the browser URL bar or navigation buttons!
+            </div>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--border); padding-top: 0.75rem; font-size: 0.825rem; color: var(--muted-foreground);">
+          <strong>Vercel / GitHub Setup:</strong> Ensure <code>manifest.json</code>, <code>sw.js</code>, and <code>icon-192.png</code> are committed alongside <code>index.html</code> in your GitHub repository so Chrome verifies all PWA criteria.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-trigger-native-install" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 6px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+          <span>Try Direct Install</span>
+        </button>
+        <button class="btn close-modal" data-target="modal-install-guide">Close</button>
+      </div>
+    </div>
+  </div>
+
+
   <!-- Toast Element -->
   <div id="toast">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--success); flex-shrink: 0;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
@@ -2848,6 +2925,68 @@ Direct this month's net distribution (~A$1,615 AUD) into **SPYI** (~A$820) and *
         renderChat();
       }, 500);
     }
+
+    
+    // ==========================================
+    // PWA Service Worker & Install Prompt Logic
+    // ==========================================
+    let deferredInstallPrompt = null;
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('Spark Finance PWA SW registered:', reg.scope))
+          .catch(err => console.log('Spark Finance SW registration info:', err));
+      });
+    }
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      // Prevent the mini-infobar from appearing on mobile
+      e.preventDefault();
+      deferredInstallPrompt = e;
+      console.log('beforeinstallprompt captured');
+    });
+
+    window.addEventListener('appinstalled', () => {
+      deferredInstallPrompt = null;
+      console.log('Spark Finance OS installed successfully as PWA');
+      showToast('Spark Finance OS installed on your phone!');
+    });
+
+    function promptPwaInstall() {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+        deferredInstallPrompt.userChoice.then((choiceResult) => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('User accepted install');
+            showToast('Installing Spark Finance OS...');
+          }
+          deferredInstallPrompt = null;
+        });
+      } else {
+        const guide = document.getElementById('modal-install-guide');
+        if (guide) guide.classList.add('open');
+      }
+    }
+
+    const btnInstallHeader = document.getElementById('btn-install-pwa');
+    if (btnInstallHeader) btnInstallHeader.addEventListener('click', promptPwaInstall);
+
+    const btnInstallDrawer = document.getElementById('btn-drawer-install');
+    if (btnInstallDrawer) btnInstallDrawer.addEventListener('click', () => {
+      const drawer = document.getElementById('mobile-drawer');
+      if (drawer) drawer.classList.remove('open');
+      promptPwaInstall();
+    });
+
+    const btnNativeTrigger = document.getElementById('btn-trigger-native-install');
+    if (btnNativeTrigger) btnNativeTrigger.addEventListener('click', () => {
+      if (deferredInstallPrompt) {
+        deferredInstallPrompt.prompt();
+      } else {
+        showToast('Use Chrome menu (⋮) -> "Install app" or "Add to Home screen"');
+      }
+    });
 
     document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".currency-btn").forEach(btn => {
