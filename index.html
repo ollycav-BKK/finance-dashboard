@@ -2,65 +2,65 @@
 <html lang="en" class="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Spark Finance OS — Portfolio & Wealth Dashboard</title>
   <style>
-    /* CSS Reset & Design Tokens based on shadcn/ui */
+    /* CSS Reset & Design Tokens based on shadcn/ui with Mobile-First Polish */
     :root {
-      --background: #ffffff;
-      --foreground: #09090b;
+      --background: #f8fafc;
+      --foreground: #0f172a;
       --card: #ffffff;
-      --card-foreground: #09090b;
+      --card-foreground: #0f172a;
       --popover: #ffffff;
-      --popover-foreground: #09090b;
+      --popover-foreground: #0f172a;
       --primary: #0284c7;
       --primary-foreground: #ffffff;
-      --secondary: #f4f4f5;
-      --secondary-foreground: #18181b;
-      --muted: #f4f4f5;
-      --muted-foreground: #71717a;
-      --accent: #f4f4f5;
-      --accent-foreground: #18181b;
+      --secondary: #f1f5f9;
+      --secondary-foreground: #0f172a;
+      --muted: #f1f5f9;
+      --muted-foreground: #475569;
+      --accent: #f1f5f9;
+      --accent-foreground: #0f172a;
       --destructive: #ef4444;
-      --destructive-foreground: #fafafa;
-      --border: #e4e4e7;
-      --input: #e4e4e7;
+      --destructive-foreground: #ffffff;
+      --border: #cbd5e1;
+      --input: #cbd5e1;
       --ring: #0284c7;
       --radius: 0.75rem;
-      --success: #16a34a;
+      --success: #15803d;
       --success-bg: #dcfce7;
-      --warning: #ea580c;
+      --warning: #c2410c;
       --warning-bg: #ffedd5;
-      --info: #0284c7;
+      --info: #0369a1;
       --info-bg: #e0f2fe;
     }
 
     .dark {
       --background: #09090b;
-      --foreground: #fafafa;
-      --card: #121215;
-      --card-foreground: #fafafa;
-      --popover: #121215;
-      --popover-foreground: #fafafa;
+      --foreground: #f8fafc;
+      --card: #131317;
+      --card-foreground: #f8fafc;
+      --popover: #131317;
+      --popover-foreground: #f8fafc;
       --primary: #38bdf8;
       --primary-foreground: #09090b;
-      --secondary: #27272a;
-      --secondary-foreground: #fafafa;
-      --muted: #1c1c20;
-      --muted-foreground: #a1a1aa;
-      --accent: #27272a;
-      --accent-foreground: #fafafa;
-      --destructive: #7f1d1d;
-      --destructive-foreground: #fafafa;
-      --border: #27272e;
-      --input: #27272e;
+      --secondary: #1e293b;
+      --secondary-foreground: #f8fafc;
+      --muted: #1e1e24;
+      --muted-foreground: #cbd5e1;
+      --accent: #1e293b;
+      --accent-foreground: #f8fafc;
+      --destructive: #dc2626;
+      --destructive-foreground: #ffffff;
+      --border: #2e2e38;
+      --input: #2e2e38;
       --ring: #38bdf8;
-      --success: #22c55e;
-      --success-bg: rgba(34, 197, 94, 0.15);
-      --warning: #f97316;
-      --warning-bg: rgba(249, 115, 22, 0.15);
+      --success: #4ade80;
+      --success-bg: rgba(34, 197, 94, 0.2);
+      --warning: #fb923c;
+      --warning-bg: rgba(249, 115, 22, 0.2);
       --info: #38bdf8;
-      --info-bg: rgba(56, 189, 248, 0.15);
+      --info-bg: rgba(56, 189, 248, 0.2);
     }
 
     * {
@@ -69,13 +69,20 @@
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-color: var(--background);
+      color: var(--foreground);
     }
 
     body {
-      background-color: var(--background);
-      color: var(--foreground);
-      min-height: 100vh;
-      overflow-x: hidden;
+      font-size: 16px;
+      line-height: 1.5;
       display: flex;
     }
 
@@ -86,7 +93,7 @@
 
     /* Layout Components */
     #sidebar {
-      width: 260px;
+      width: 270px;
       min-height: 100vh;
       background-color: var(--card);
       border-right: 1px solid var(--border);
@@ -98,7 +105,7 @@
     }
 
     #sidebar.collapsed {
-      width: 72px;
+      width: 76px;
     }
 
     #sidebar.collapsed .nav-text,
@@ -109,67 +116,70 @@
 
     #sidebar.collapsed .sidebar-header {
       justify-content: center;
-      padding: 1rem 0.5rem;
+      padding: 1.25rem 0.5rem;
     }
 
     #sidebar.collapsed .nav-item {
       justify-content: center;
-      padding: 0.75rem 0;
+      padding: 0.85rem 0;
     }
 
     .sidebar-header {
-      padding: 1.25rem 1rem;
+      padding: 1.4rem 1.2rem;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.85rem;
       border-bottom: 1px solid var(--border);
     }
 
     .brand-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 9px;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
       background: linear-gradient(135deg, #0284c7, #38bdf8);
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      font-weight: 700;
-      font-size: 1.1rem;
+      font-weight: 800;
+      font-size: 1.25rem;
       flex-shrink: 0;
-      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);
+      box-shadow: 0 4px 12px rgba(2, 132, 199, 0.3);
     }
 
     .brand-title {
-      font-weight: 700;
-      font-size: 0.95rem;
+      font-weight: 800;
+      font-size: 1.1rem;
       line-height: 1.2;
+      letter-spacing: -0.01em;
     }
 
     .brand-subtitle {
-      font-size: 0.75rem;
+      font-size: 0.825rem;
       color: var(--muted-foreground);
+      font-weight: 500;
+      margin-top: 2px;
     }
 
     .nav-list {
       list-style: none;
-      padding: 1rem 0.75rem;
+      padding: 1.2rem 0.85rem;
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
+      gap: 0.35rem;
       flex: 1;
     }
 
     .nav-item {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      padding: 0.65rem 0.85rem;
+      gap: 0.85rem;
+      padding: 0.75rem 1rem;
       border-radius: 0.5rem;
       color: var(--muted-foreground);
       text-decoration: none;
-      font-size: 0.875rem;
-      font-weight: 500;
+      font-size: 1rem;
+      font-weight: 600;
       cursor: pointer;
       border: 1px solid transparent;
       transition: all 0.15s ease;
@@ -184,13 +194,13 @@
     .nav-item.active {
       background-color: var(--accent);
       color: var(--primary);
-      font-weight: 600;
-      border-color: rgba(56, 189, 248, 0.2);
+      font-weight: 700;
+      border-color: rgba(56, 189, 248, 0.25);
     }
 
     .nav-icon {
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       flex-shrink: 0;
       display: flex;
       align-items: center;
@@ -199,8 +209,9 @@
 
     .nav-badge {
       margin-left: auto;
-      font-size: 0.675rem;
-      padding: 0.15rem 0.45rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
       border-radius: 9999px;
       background-color: var(--muted);
       color: var(--muted-foreground);
@@ -213,65 +224,74 @@
       display: flex;
       flex-direction: column;
       min-width: 0;
+      width: 100%;
       background-color: var(--background);
     }
 
     /* Top Bar */
     header {
-      height: 60px;
+      height: 64px;
       border-bottom: 1px solid var(--border);
       background-color: var(--card);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 1.5rem;
+      padding: 0 1.75rem;
       position: sticky;
       top: 0;
       z-index: 30;
       backdrop-filter: blur(8px);
+      width: 100%;
     }
 
     .header-left {
       display: flex;
       align-items: center;
       gap: 1rem;
+      min-width: 0;
     }
 
     .header-right {
       display: flex;
       align-items: center;
       gap: 0.75rem;
+      flex-shrink: 0;
     }
 
     .breadcrumbs {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      font-size: 0.85rem;
+      gap: 0.6rem;
+      font-size: 0.95rem;
       color: var(--muted-foreground);
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .breadcrumbs span.current {
       color: var(--foreground);
-      font-weight: 600;
+      font-weight: 700;
     }
 
-    /* Top bar buttons */
+    /* Buttons */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.4rem;
-      padding: 0.45rem 0.85rem;
+      gap: 0.45rem;
+      padding: 0.55rem 1rem;
       border-radius: 0.5rem;
-      font-size: 0.825rem;
-      font-weight: 500;
+      font-size: 0.9rem;
+      font-weight: 600;
       border: 1px solid var(--border);
       background-color: var(--card);
       color: var(--foreground);
       cursor: pointer;
       transition: all 0.15s ease;
       outline: none;
+      min-height: 38px;
     }
 
     .btn:hover {
@@ -290,33 +310,35 @@
     }
 
     .btn-sm {
-      padding: 0.3rem 0.6rem;
-      font-size: 0.75rem;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.825rem;
+      min-height: 32px;
     }
 
     .btn-icon {
-      width: 34px;
-      height: 34px;
+      width: 38px;
+      height: 38px;
       padding: 0;
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
     }
 
-    /* Currency Switcher Pill Group */
+    /* Currency Switcher */
     .currency-switch {
       display: flex;
       border: 1px solid var(--border);
       border-radius: 0.5rem;
       overflow: hidden;
       background-color: var(--muted);
-      padding: 2px;
+      padding: 3px;
     }
 
     .currency-btn {
-      padding: 0.25rem 0.6rem;
-      font-size: 0.75rem;
-      font-weight: 600;
+      padding: 0.35rem 0.65rem;
+      font-size: 0.85rem;
+      font-weight: 700;
       border: none;
       background: transparent;
       color: var(--muted-foreground);
@@ -328,13 +350,13 @@
     .currency-btn.active {
       background-color: var(--card);
       color: var(--foreground);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
     }
 
-    /* Content Container */
+    /* Main Container */
     main {
-      padding: 1.75rem 2rem 5rem 2rem;
-      max-width: 1400px;
+      padding: 2rem 2.25rem 6rem 2.25rem;
+      max-width: 1440px;
       margin: 0 auto;
       width: 100%;
     }
@@ -345,31 +367,33 @@
     }
 
     .page-eyebrow {
-      font-size: 0.75rem;
-      font-weight: 600;
+      font-size: 0.875rem;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       color: var(--primary);
-      margin-bottom: 0.35rem;
+      margin-bottom: 0.45rem;
     }
 
     .page-title {
-      font-size: 1.75rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.2;
     }
 
     .page-desc {
-      font-size: 0.875rem;
+      font-size: 1.05rem;
       color: var(--muted-foreground);
-      margin-top: 0.35rem;
-      max-width: 800px;
+      margin-top: 0.5rem;
+      max-width: 860px;
+      line-height: 1.6;
     }
 
     /* KPI Cards Grid */
     .kpi-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.25rem;
       margin-bottom: 1.75rem;
     }
@@ -378,14 +402,14 @@
       background-color: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 1.25rem 1.4rem;
+      padding: 1.5rem 1.6rem;
       position: relative;
       overflow: hidden;
       transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
 
     .kpi-card:hover {
-      box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.2);
     }
 
     .kpi-card::before {
@@ -394,7 +418,7 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 3px;
+      height: 4px;
     }
 
     .kpi-card.tone-primary::before { background-color: var(--primary); }
@@ -406,40 +430,43 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.85rem;
     }
 
     .kpi-label {
-      font-size: 0.75rem;
-      font-weight: 600;
+      font-size: 0.875rem;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       color: var(--muted-foreground);
     }
 
     .kpi-icon {
       color: var(--muted-foreground);
+      width: 22px;
+      height: 22px;
     }
 
     .kpi-val {
-      font-size: 1.85rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -0.025em;
+      line-height: 1.15;
     }
 
     .kpi-sub {
-      font-size: 0.775rem;
+      font-size: 0.925rem;
       color: var(--muted-foreground);
-      margin-top: 0.45rem;
-      line-height: 1.4;
+      margin-top: 0.6rem;
+      line-height: 1.5;
     }
 
-    /* Generic Panel / Card */
+    /* Panels */
     .panel {
       background-color: var(--card);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 1.4rem;
+      padding: 1.5rem;
       margin-bottom: 1.5rem;
     }
 
@@ -448,51 +475,38 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 1.25rem;
-      padding-bottom: 0.75rem;
+      padding-bottom: 0.85rem;
       border-bottom: 1px solid var(--border);
+      gap: 0.5rem;
+      flex-wrap: wrap;
     }
 
     .panel-title {
-      font-size: 0.95rem;
-      font-weight: 600;
+      font-size: 1.15rem;
+      font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.04em;
       color: var(--foreground);
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.6rem;
     }
 
     /* Badges */
     .badge {
       display: inline-flex;
       align-items: center;
-      gap: 0.25rem;
-      padding: 0.2rem 0.55rem;
+      gap: 0.35rem;
+      padding: 0.28rem 0.65rem;
       border-radius: 9999px;
-      font-size: 0.725rem;
-      font-weight: 600;
+      font-size: 0.825rem;
+      font-weight: 700;
     }
 
-    .badge-success {
-      background-color: var(--success-bg);
-      color: var(--success);
-    }
-
-    .badge-warning {
-      background-color: var(--warning-bg);
-      color: var(--warning);
-    }
-
-    .badge-info {
-      background-color: var(--info-bg);
-      color: var(--info);
-    }
-
-    .badge-muted {
-      background-color: var(--muted);
-      color: var(--muted-foreground);
-    }
+    .badge-success { background-color: var(--success-bg); color: var(--success); }
+    .badge-warning { background-color: var(--warning-bg); color: var(--warning); }
+    .badge-info { background-color: var(--info-bg); color: var(--info); }
+    .badge-muted { background-color: var(--muted); color: var(--muted-foreground); }
 
     /* Tables */
     .table-container {
@@ -504,45 +518,99 @@
       width: 100%;
       border-collapse: collapse;
       text-align: left;
-      font-size: 0.85rem;
+      font-size: 0.95rem;
     }
 
     th {
-      padding: 0.75rem 1rem;
-      font-size: 0.75rem;
-      font-weight: 600;
+      padding: 0.9rem 1.1rem;
+      font-size: 0.85rem;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.06em;
       color: var(--muted-foreground);
       border-bottom: 1px solid var(--border);
       background-color: var(--muted);
+      white-space: nowrap;
     }
 
     td {
-      padding: 0.85rem 1rem;
+      padding: 1rem 1.1rem;
       border-bottom: 1px solid var(--border);
+      color: var(--foreground);
+      line-height: 1.45;
+    }
+
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background-color: var(--accent); }
+
+    /* Responsive Mobile Card View */
+    .mobile-cards-view {
+      display: none;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .mobile-card {
+      background-color: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.15rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .mobile-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 0.75rem;
+      gap: 0.5rem;
+    }
+
+    .mobile-card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.65rem 1rem;
+      padding-top: 0.65rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.9rem;
+    }
+
+    .mobile-card-grid dt {
+      font-size: 0.775rem;
+      color: var(--muted-foreground);
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .mobile-card-grid dd {
+      font-size: 1rem;
+      font-weight: 700;
       color: var(--foreground);
     }
 
-    tr:last-child td {
-      border-bottom: none;
+    .mobile-card-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.85rem;
+      padding-top: 0.75rem;
+      border-top: 1px solid var(--border);
     }
 
-    tr:hover td {
-      background-color: var(--accent);
+    .mobile-card-actions button {
+      flex: 1;
     }
 
     /* Grids */
     .grid-2 {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 1.25rem;
+      gap: 1.5rem;
     }
 
     .grid-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 1.25rem;
+      gap: 1.5rem;
     }
 
     .grid-5 {
@@ -551,37 +619,32 @@
       gap: 1.5rem;
     }
 
-    @media (max-width: 1024px) {
-      .grid-5, .grid-3, .grid-2 {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    /* Form Inputs & Controls */
+    /* Forms */
     .form-group {
-      margin-bottom: 1rem;
+      margin-bottom: 1.25rem;
     }
 
     .form-label {
       display: block;
-      font-size: 0.775rem;
-      font-weight: 600;
+      font-size: 0.875rem;
+      font-weight: 700;
       color: var(--muted-foreground);
-      margin-bottom: 0.4rem;
+      margin-bottom: 0.5rem;
       text-transform: uppercase;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.04em;
     }
 
     .form-control {
       width: 100%;
-      padding: 0.55rem 0.85rem;
+      padding: 0.75rem 1rem;
       background-color: var(--background);
       border: 1px solid var(--border);
       border-radius: 0.5rem;
       color: var(--foreground);
-      font-size: 0.875rem;
+      font-size: 1rem;
       outline: none;
       transition: border-color 0.15s ease;
+      min-height: 44px;
     }
 
     .form-control:focus {
@@ -590,26 +653,28 @@
 
     /* Sliders */
     .slider-container {
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.5rem;
     }
 
     .slider-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.45rem;
-      font-size: 0.85rem;
+      margin-bottom: 0.65rem;
+      font-size: 0.95rem;
+      font-weight: 600;
     }
 
     .slider-val {
-      font-weight: 700;
+      font-weight: 800;
+      font-size: 1.1rem;
       color: var(--primary);
     }
 
     input[type=range] {
       width: 100%;
-      height: 6px;
-      border-radius: 3px;
+      height: 10px;
+      border-radius: 5px;
       background: var(--muted);
       outline: none;
       -webkit-appearance: none;
@@ -617,12 +682,12 @@
 
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 18px;
-      height: 18px;
+      width: 24px;
+      height: 24px;
       border-radius: 50%;
       background: var(--primary);
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
     }
 
     /* Mobile Drawer */
@@ -630,9 +695,9 @@
       display: none;
       position: fixed;
       inset: 0;
-      background-color: rgba(0,0,0,0.6);
+      background-color: rgba(0,0,0,0.65);
       backdrop-filter: blur(4px);
-      z-index: 50;
+      z-index: 60;
     }
 
     #mobile-drawer.open {
@@ -640,7 +705,8 @@
     }
 
     .drawer-content {
-      width: 280px;
+      width: 300px;
+      max-width: 85%;
       height: 100%;
       background-color: var(--card);
       border-right: 1px solid var(--border);
@@ -654,22 +720,26 @@
       to { transform: translateX(0); }
     }
 
-    /* Toast Notification */
+    /* Toast */
     #toast {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
+      bottom: 74px;
+      left: 16px;
+      right: 16px;
+      max-width: 450px;
+      margin: 0 auto;
       background-color: var(--card);
       border: 1px solid var(--border);
       color: var(--foreground);
-      padding: 0.85rem 1.25rem;
+      padding: 0.9rem 1.25rem;
       border-radius: var(--radius);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      box-shadow: 0 12px 36px rgba(0,0,0,0.3);
       display: flex;
       align-items: center;
       gap: 0.75rem;
       z-index: 100;
-      font-size: 0.875rem;
+      font-size: 0.9rem;
+      font-weight: 600;
       opacity: 0;
       pointer-events: none;
       transform: translateY(12px);
@@ -687,9 +757,9 @@
       display: none;
       position: fixed;
       inset: 0;
-      background-color: rgba(0,0,0,0.6);
+      background-color: rgba(0,0,0,0.65);
       backdrop-filter: blur(4px);
-      z-index: 60;
+      z-index: 70;
       align-items: center;
       justify-content: center;
       padding: 1rem;
@@ -704,8 +774,8 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       width: 100%;
-      max-width: 520px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      max-width: 540px;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.35);
       overflow: hidden;
       animation: zoomIn 0.2s ease-out;
     }
@@ -724,8 +794,8 @@
     }
 
     .modal-title {
-      font-weight: 700;
-      font-size: 1.1rem;
+      font-weight: 800;
+      font-size: 1.2rem;
     }
 
     .modal-body {
@@ -750,12 +820,14 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 60px;
+      height: 62px;
       background-color: var(--card);
       border-top: 1px solid var(--border);
-      z-index: 35;
+      z-index: 50;
       grid-template-columns: repeat(6, 1fr);
       align-items: center;
+      box-shadow: 0 -4px 16px rgba(0,0,0,0.1);
+      padding-bottom: env(safe-area-inset-bottom, 0px);
     }
 
     .bottom-nav-item {
@@ -763,26 +835,28 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      font-size: 0.65rem;
+      font-size: 0.725rem;
+      font-weight: 600;
       color: var(--muted-foreground);
       text-decoration: none;
-      gap: 0.2rem;
+      gap: 0.25rem;
       cursor: pointer;
+      height: 100%;
+      user-select: none;
     }
 
     .bottom-nav-item.active {
       color: var(--primary);
-      font-weight: 600;
+      font-weight: 700;
     }
 
-    @media (max-width: 768px) {
-      #sidebar { display: none; }
-      #mobile-bottom-nav { display: grid; }
-      main { padding: 1.25rem 1rem 5rem 1rem; }
-      header { padding: 0 1rem; }
+    .bottom-nav-item.active svg {
+      stroke: var(--primary);
+      transform: scale(1.1);
+      transition: transform 0.15s ease;
     }
 
-    /* SVG Charts styling */
+    /* SVG Charts */
     .chart-container {
       width: 100%;
       height: 320px;
@@ -795,7 +869,7 @@
       overflow: visible;
     }
 
-    /* AI Chat view */
+    /* AI Chat */
     .chat-container {
       display: flex;
       flex-direction: column;
@@ -817,11 +891,11 @@
     }
 
     .chat-bubble {
-      max-width: 80%;
+      max-width: 85%;
       padding: 1rem 1.25rem;
       border-radius: 1rem;
-      font-size: 0.9rem;
-      line-height: 1.5;
+      font-size: 0.95rem;
+      line-height: 1.55;
     }
 
     .chat-bubble.assistant {
@@ -853,8 +927,9 @@
       border-radius: 0.5rem;
       background-color: var(--card);
       color: var(--foreground);
-      font-size: 0.9rem;
+      font-size: 1rem;
       outline: none;
+      min-height: 44px;
     }
 
     .chat-input:focus {
@@ -863,22 +938,30 @@
 
     .chat-chips {
       display: flex;
-      flex-wrap: wrap;
+      overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
       gap: 0.5rem;
-      padding: 0.75rem 1.25rem;
+      padding: 0.75rem 1rem;
       background-color: var(--accent);
       border-top: 1px solid var(--border);
+    }
+
+    .chat-chips::-webkit-scrollbar {
+      display: none;
     }
 
     .chip-btn {
       background-color: var(--card);
       border: 1px solid var(--border);
-      padding: 0.35rem 0.75rem;
+      padding: 0.4rem 0.85rem;
       border-radius: 9999px;
-      font-size: 0.75rem;
+      font-size: 0.825rem;
+      font-weight: 600;
       color: var(--foreground);
       cursor: pointer;
       transition: all 0.15s ease;
+      flex-shrink: 0;
     }
 
     .chip-btn:hover {
@@ -893,11 +976,143 @@
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
+
+    /* =========================================================
+       SPECIFIC MOBILE ADAPTATIONS (<= 768px)
+       ========================================================= */
+    @media (max-width: 768px) {
+      #sidebar { display: none; }
+      #mobile-bottom-nav { display: grid; }
+      #open-drawer { display: flex !important; }
+
+      header {
+        height: 58px;
+        padding: 0 0.85rem;
+      }
+
+      .header-left {
+        gap: 0.6rem;
+      }
+
+      .breadcrumbs {
+        font-size: 0.875rem;
+      }
+
+      .breadcrumbs a span {
+        max-width: 140px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .header-right {
+        gap: 0.4rem;
+      }
+
+      .currency-switch {
+        padding: 2px;
+      }
+
+      .currency-btn {
+        padding: 0.25rem 0.45rem;
+        font-size: 0.75rem;
+      }
+
+      #sync-label {
+        display: none;
+      }
+
+      #refresh-btn {
+        padding: 0;
+        width: 36px;
+        height: 36px;
+        min-height: 36px;
+      }
+
+      #theme-toggle {
+        width: 36px;
+        height: 36px;
+      }
+
+      main {
+        padding: 1.25rem 0.85rem calc(80px + env(safe-area-inset-bottom, 10px)) 0.85rem;
+      }
+
+      .page-header {
+        margin-bottom: 1.25rem;
+      }
+
+      .page-title {
+        font-size: 1.65rem;
+      }
+
+      .page-desc {
+        font-size: 0.925rem;
+      }
+
+      .kpi-grid {
+        grid-template-columns: 1fr;
+        gap: 0.85rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .kpi-card {
+        padding: 1.15rem 1.25rem;
+      }
+
+      .kpi-val {
+        font-size: 1.85rem;
+      }
+
+      .kpi-sub {
+        font-size: 0.85rem;
+      }
+
+      .grid-5, .grid-3, .grid-2 {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .panel {
+        padding: 1.15rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .panel-title {
+        font-size: 1rem;
+      }
+
+      /* On mobile, hide wide table and show beautiful mobile card list */
+      .desktop-table-view {
+        display: none !important;
+      }
+
+      .mobile-cards-view {
+        display: flex !important;
+      }
+
+      .modal-box {
+        align-self: flex-end;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        max-height: 88vh;
+      }
+
+      .chat-container {
+        height: calc(100vh - 180px);
+        min-height: 440px;
+      }
+
+      .chat-bubble {
+        max-width: 90%;
+        font-size: 0.9rem;
+        padding: 0.85rem 1.1rem;
+      }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Collapsible Sidebar -->
+  <!-- Collapsible Sidebar (Desktop) -->
   <aside id="sidebar">
     <div class="sidebar-header">
       <div class="brand-icon">⚡</div>
@@ -910,7 +1125,7 @@
     <ul class="nav-list">
       <li class="nav-item active" data-tab="overview">
         <span class="nav-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
         </span>
         <span class="nav-text">Dashboard</span>
         <span class="nav-badge">Live</span>
@@ -918,14 +1133,14 @@
 
       <li class="nav-item" data-tab="projections">
         <span class="nav-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
         </span>
         <span class="nav-text">Projections</span>
       </li>
 
       <li class="nav-item" data-tab="thaitax">
         <span class="nav-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" x2="22" y1="2" y2="2"/><line x1="12" x2="12" y1="6" y2="18"/><line x1="2" x2="22" y1="22" y2="22"/><polygon points="2 6 12 2 22 6 22 22 2 22 2 6"/><line x1="6" x2="6" y1="18" y2="22"/><line x1="18" x2="18" y1="18" y2="22"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="2" x2="22" y1="2" y2="2"/><line x1="12" x2="12" y1="6" y2="18"/><line x1="2" x2="22" y1="22" y2="22"/><polygon points="2 6 12 2 22 6 22 22 2 22 2 6"/><line x1="6" x2="6" y1="18" y2="22"/><line x1="18" x2="18" y1="18" y2="22"/></svg>
         </span>
         <span class="nav-text">Thai Tax</span>
         <span class="nav-badge">Paw 161</span>
@@ -933,7 +1148,7 @@
 
       <li class="nav-item" data-tab="marine">
         <span class="nav-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.76"/><path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/><line x1="12" x2="12" y1="2" y2="10"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.76"/><path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/><line x1="12" x2="12" y1="2" y2="10"/></svg>
         </span>
         <span class="nav-text">Marine</span>
         <span class="nav-badge">SHIPAUS</span>
@@ -941,23 +1156,23 @@
 
       <li class="nav-item" data-tab="calendar">
         <span class="nav-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
         </span>
         <span class="nav-text">Calendar</span>
       </li>
 
       <li class="nav-item" data-tab="advisor">
         <span class="nav-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/><path d="M2 14h2"/><path d="M20 14h2"/><path d="M15 13v2"/><path d="M9 13v2"/></svg>
         </span>
         <span class="nav-text">Advisor Copilot</span>
         <span class="nav-badge" style="background-color: var(--primary); color: var(--primary-foreground);">AI</span>
       </li>
     </ul>
 
-    <div style="padding: 1rem; border-top: 1px solid var(--border);">
+    <div style="padding: 1.2rem; border-top: 1px solid var(--border);">
       <button id="toggle-sidebar" class="btn" style="width: 100%; justify-content: center;">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M9 3v18"/></svg>
         <span class="nav-text">Collapse Menu</span>
       </button>
     </div>
@@ -967,7 +1182,7 @@
   <div id="mobile-drawer">
     <div class="drawer-content">
       <div class="sidebar-header" style="justify-content: space-between;">
-        <div style="display: flex; align-items: center; gap: 0.75rem;">
+        <div style="display: flex; align-items: center; gap: 0.85rem;">
           <div class="brand-icon">⚡</div>
           <div>
             <div class="brand-title">Spark Finance</div>
@@ -975,7 +1190,7 @@
           </div>
         </div>
         <button id="close-drawer" class="btn btn-icon">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" x2="6" y1="6" y2="18"/><line x1="6" x2="18" y1="6" y2="18"/></svg>
         </button>
       </div>
       <ul class="nav-list" id="mobile-nav-list">
@@ -989,15 +1204,13 @@
     <!-- Top Bar -->
     <header>
       <div class="header-left">
-        <button id="open-drawer" class="btn btn-icon" style="display: none;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+        <button id="open-drawer" class="btn btn-icon" style="display: none;" aria-label="Open navigation menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
         </button>
-                <div class="breadcrumbs">
-          <a href="https://drive.google.com/drive/folders/1UAAVQBsxWmGiOw4mwL1eMO0Lnnb0O4BU" target="_blank" style="color: inherit; text-decoration: none; display: flex; align-items: center; gap: 4px;" title="Open Financials_Master in Google Drive"><span>Financials_Master</span></a>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
-          <a href="https://docs.google.com/spreadsheets/d/10MhUF1b5UKgCzXRme14mZsjVmhE1ScKf0GCZKA9JUg4/edit?usp=drivesdk" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 4px;" title="Connected to Google Sheet: Master_Financial_Ledger">
+        <div class="breadcrumbs">
+          <a href="https://docs.google.com/spreadsheets/d/10MhUF1b5UKgCzXRme14mZsjVmhE1ScKf0GCZKA9JUg4/edit?usp=drivesdk" target="_blank" style="color: var(--primary); text-decoration: none; font-weight: 700; display: flex; align-items: center; gap: 5px;" title="Connected to Google Sheet: Master_Financial_Ledger">
             <span id="breadcrumb-title">Master_Financial_Ledger</span>
-            <span class="badge badge-success" style="font-size: 10px; padding: 1px 6px;">Synced</span>
+            <span class="badge badge-success" style="font-size: 10px; padding: 2px 6px;">Live</span>
           </a>
         </div>
       </div>
@@ -1005,20 +1218,20 @@
       <div class="header-right">
         <!-- Currency Switcher -->
         <div class="currency-switch">
-          <button class="currency-btn active" data-cur="AUD">AUD (A$)</button>
-          <button class="currency-btn" data-cur="USD">USD ($)</button>
-          <button class="currency-btn" data-cur="THB">THB (฿)</button>
+          <button class="currency-btn active" data-cur="AUD">AUD</button>
+          <button class="currency-btn" data-cur="USD">USD</button>
+          <button class="currency-btn" data-cur="THB">THB</button>
         </div>
 
         <!-- Quick Refresh / Sync Button -->
         <button id="refresh-btn" class="btn" title="Simulate ledger & live market sync">
-          <svg id="sync-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
+          <svg id="sync-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 21h5v-5"/></svg>
           <span id="sync-label">Sync</span>
         </button>
 
         <!-- Dark / Light Mode Toggle -->
         <button id="theme-toggle" class="btn btn-icon" title="Toggle dark / light theme">
-          <svg id="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>
+          <svg id="theme-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="M4.93 4.93l1.41 1.41"/><path d="M17.66 17.66l1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="M6.34 17.66l-1.41 1.41"/><path d="M19.07 4.93l-1.41 1.41"/></svg>
         </button>
       </div>
     </header>
@@ -1028,9 +1241,9 @@
       <!-- TAB 1: OVERVIEW / PORTFOLIO -->
       <section id="tab-overview" class="tab-content">
         <div class="page-header">
-          <div class="page-eyebrow">Module 01 & 02 · Portfolio & Wealth Console</div>
+          <div class="page-eyebrow">Module 01 & 02 · Master Financial System</div>
           <h1 class="page-title">Executive Dashboard</h1>
-          <p class="page-desc">Consolidated position across high-yield NEOS income ETFs, SHIPAUS marine charter operations, and Thai tax compliance.</p>
+          <p class="page-desc">Consolidated position across high-yield NEOS income ETFs (1,868 units), SHIPAUS marine charter operations, and Thai tax compliance.</p>
         </div>
 
         <!-- 4 Primary KPI Cards Required -->
@@ -1039,40 +1252,40 @@
             <div class="kpi-top">
               <span class="kpi-label">Total Portfolio Value</span>
               <span class="kpi-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg>
               </span>
             </div>
-            <div class="kpi-val num" id="kpi-total-val">A$108,024</div>
-            <div class="kpi-sub" id="kpi-total-sub">Cost A$107,328 · <span class="badge badge-success">+A$696 (+0.65%)</span></div>
+            <div class="kpi-val num" id="kpi-total-val">A$104,557</div>
+            <div class="kpi-sub" id="kpi-total-sub">Cost A$107,328 · <span class="badge badge-warning">-A$2,771 (-2.58%)</span> · <span class="badge badge-info">1,868 Units</span></div>
           </div>
 
           <div class="kpi-card tone-success">
             <div class="kpi-top">
               <span class="kpi-label">Projected Annual Income</span>
               <span class="kpi-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
               </span>
             </div>
-            <div class="kpi-val num" id="kpi-annual-inc">A$63,556</div>
-            <div class="kpi-sub">A$17,556 NEOS Divs + A$46,000 Marine Operations</div>
+            <div class="kpi-val num" id="kpi-annual-inc">A$65,375</div>
+            <div class="kpi-sub">A$19,375 NEOS Divs + A$46,000 Marine Operations</div>
           </div>
 
           <div class="kpi-card tone-warning">
             <div class="kpi-top">
               <span class="kpi-label">Monthly Cash Flow</span>
               <span class="kpi-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
               </span>
             </div>
-            <div class="kpi-val num" id="kpi-monthly-flow">A$5,296 / mo</div>
-            <div class="kpi-sub">A$1,463/mo ETF distributions + A$3,833/mo charter fees</div>
+            <div class="kpi-val num" id="kpi-monthly-flow">A$5,448 / mo</div>
+            <div class="kpi-sub">A$1,615/mo ETF distributions + A$3,833/mo charter fees</div>
           </div>
 
           <div class="kpi-card tone-info">
             <div class="kpi-top">
               <span class="kpi-label">Tax Estimates</span>
               <span class="kpi-icon">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
               </span>
             </div>
             <div class="kpi-val num" id="kpi-tax-est">A$4,600</div>
@@ -1085,28 +1298,28 @@
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
                 Asset Allocation
               </div>
               <span class="badge badge-info">Drift Engine</span>
             </div>
             
             <div style="margin-bottom: 1.5rem;">
-              <div style="display: flex; height: 16px; border-radius: 9999px; overflow: hidden; margin-bottom: 1rem;">
-                <div style="width: 56%; background-color: #f59e0b;" title="Crypto 56%"></div>
-                <div style="width: 27.8%; background-color: #0284c7;" title="Equities 27.8%"></div>
-                <div style="width: 16.2%; background-color: #10b981;" title="Gold 16.2%"></div>
+              <div style="display: flex; height: 18px; border-radius: 9999px; overflow: hidden; margin-bottom: 1.25rem;">
+                <div style="width: 53.7%; background-color: #f59e0b;" title="Crypto 53.7%"></div>
+                <div style="width: 29.5%; background-color: #0284c7;" title="Equities 29.5%"></div>
+                <div style="width: 16.7%; background-color: #10b981;" title="Gold 16.7%"></div>
               </div>
 
-              <div style="display: flex; flex-direction: column; gap: 0.85rem;" id="sleeve-list">
+              <div style="display: flex; flex-direction: column; gap: 1rem;" id="sleeve-list">
                 <!-- populated dynamically -->
               </div>
             </div>
 
-            <div style="border-top: 1px solid var(--border); padding-top: 1rem;">
-              <div style="font-size: 0.775rem; font-weight: 600; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 0.5rem;">Rebalancing Action</div>
-              <p style="font-size: 0.825rem; color: var(--muted-foreground); line-height: 1.4;">
-                Crypto sleeve is overweight (<span style="color: #f59e0b; font-weight: 600;">56.0%</span> vs 50% target). Route this month's <span id="route-cash-text" style="font-weight: 600;">A$1,463</span> cash distribution directly into <strong style="color: var(--primary);">SPYI</strong> and <strong style="color: var(--primary);">QQQI</strong>.
+            <div style="border-top: 1px solid var(--border); padding-top: 1.25rem;">
+              <div style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; color: var(--muted-foreground); margin-bottom: 0.6rem;">Rebalancing Action</div>
+              <p style="font-size: 0.95rem; color: var(--muted-foreground); line-height: 1.5;">
+                Crypto sleeve is balanced (<span style="color: #f59e0b; font-weight: 700;">53.7%</span> within 45–55% target). Route this month's <span id="route-cash-text" style="font-weight: 700; color: var(--foreground);">A$1,615</span> distribution into <strong style="color: var(--primary);">SPYI</strong> and <strong style="color: var(--primary);">QQQI</strong> to restore equities target (30–35%).
               </p>
             </div>
           </div>
@@ -1114,23 +1327,24 @@
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
-                Core Holdings & Yield
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></svg>
+                Core Holdings & Live Valuation
               </div>
               <button class="btn btn-sm btn-primary" id="btn-add-holding">+ Add Asset</button>
             </div>
 
-            <div class="table-container">
+            <!-- Desktop View: Table -->
+            <div class="table-container desktop-table-view">
               <table id="holdings-table">
                 <thead>
                   <tr>
                     <th>Ticker</th>
                     <th>Sleeve</th>
                     <th style="text-align: right;">Units</th>
-                    <th style="text-align: right;">Price</th>
+                    <th style="text-align: right;">Live Price</th>
                     <th style="text-align: right;">Market Value</th>
                     <th style="text-align: right;">Weight</th>
-                    <th style="text-align: right;">Monthly Div</th>
+                    <th style="text-align: right;">Est Monthly Div</th>
                     <th style="text-align: center;">Actions</th>
                   </tr>
                 </thead>
@@ -1138,6 +1352,11 @@
                   <!-- dynamically populated -->
                 </tbody>
               </table>
+            </div>
+
+            <!-- Mobile View: Tactile Cards -->
+            <div class="mobile-cards-view" id="holdings-mobile-cards">
+              <!-- populated dynamically -->
             </div>
           </div>
         </div>
@@ -1156,7 +1375,7 @@
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="21" y2="21"/><line x1="4" x2="20" y1="3" y2="3"/><polyline points="4 15 8 9 12 11 16 6 20 10"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" x2="20" y1="21" y2="21"/><line x1="4" x2="20" y1="3" y2="3"/><polyline points="4 15 8 9 12 11 16 6 20 10"/></svg>
                 Scenario Parameters
               </div>
               <button class="btn btn-sm" id="btn-reset-proj">Reset</button>
@@ -1194,18 +1413,18 @@
               <input type="range" id="input-div-growth" min="0" max="10" step="0.5" value="3.0">
             </div>
 
-            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-top: 1px solid var(--border);">
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 1rem 0; border-top: 1px solid var(--border);">
               <div>
-                <div style="font-size: 0.85rem; font-weight: 600;">Reinvest Dividends (DRIP)</div>
-                <div style="font-size: 0.75rem; color: var(--muted-foreground);">Compound distributions monthly</div>
+                <div style="font-size: 0.95rem; font-weight: 700;">Reinvest Dividends (DRIP)</div>
+                <div style="font-size: 0.85rem; color: var(--muted-foreground);">Compound distributions monthly into portfolio</div>
               </div>
-              <input type="checkbox" id="input-drip" checked style="width: 18px; height: 18px; cursor: pointer;">
+              <input type="checkbox" id="input-drip" checked style="width: 22px; height: 22px; cursor: pointer;">
             </div>
 
-            <div style="margin-top: 1.5rem; background: var(--muted); padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border);">
-              <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--muted-foreground); font-weight: 600;">Projected Balance (End of Horizon)</div>
-              <div style="font-size: 1.75rem; font-weight: 700; color: var(--primary); margin: 0.25rem 0;" class="num" id="proj-end-balance">A$312,450</div>
-              <div style="font-size: 0.8rem; color: var(--muted-foreground);" id="proj-passive-income">Generates ~A$54,678 / yr passive income</div>
+            <div style="margin-top: 1.5rem; background: var(--muted); padding: 1.25rem; border-radius: 0.5rem; border: 1px solid var(--border);">
+              <div style="font-size: 0.85rem; text-transform: uppercase; color: var(--muted-foreground); font-weight: 700;">Projected Balance (End of Horizon)</div>
+              <div style="font-size: 2rem; font-weight: 800; color: var(--primary); margin: 0.35rem 0;" class="num" id="proj-end-balance">A$308,120</div>
+              <div style="font-size: 0.9rem; color: var(--muted-foreground);" id="proj-passive-income">Generates ~A$53,921 / yr passive income</div>
             </div>
           </div>
 
@@ -1213,12 +1432,12 @@
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 15h18"/><path d="m9 9 3 3 6-6"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M3 15h18"/><path d="m9 9 3 3 6-6"/></svg>
                 Compounding Growth Curve
               </div>
-              <div style="display: flex; gap: 1rem; font-size: 0.75rem;">
-                <span style="display: flex; align-items: center; gap: 0.35rem;"><span style="width: 10px; height: 10px; border-radius: 2px; background: #0284c7;"></span> Total Value</span>
-                <span style="display: flex; align-items: center; gap: 0.35rem;"><span style="width: 10px; height: 10px; border-radius: 2px; background: #94a3b8;"></span> Contributed</span>
+              <div style="display: flex; gap: 1.25rem; font-size: 0.85rem; font-weight: 600;">
+                <span style="display: flex; align-items: center; gap: 0.4rem;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #0284c7;"></span> Total Value</span>
+                <span style="display: flex; align-items: center; gap: 0.4rem;"><span style="width: 12px; height: 12px; border-radius: 3px; background: #94a3b8;"></span> Contributed</span>
               </div>
             </div>
 
@@ -1226,9 +1445,9 @@
               <!-- SVG chart rendered via JS -->
             </div>
 
-            <div style="margin-top: 1.5rem;">
-              <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.75rem;">Year-by-Year Growth Table</div>
-              <div class="table-container">
+            <div style="margin-top: 1.75rem;">
+              <div style="font-size: 1rem; font-weight: 700; margin-bottom: 0.85rem;">Year-by-Year Growth Schedule</div>
+              <div class="table-container desktop-table-view">
                 <table>
                   <thead>
                     <tr>
@@ -1244,6 +1463,9 @@
                     <!-- Populated dynamically -->
                   </tbody>
                 </table>
+              </div>
+              <div class="mobile-cards-view" id="proj-mobile-cards">
+                <!-- Mobile card projection schedule -->
               </div>
             </div>
           </div>
@@ -1261,19 +1483,19 @@
         <div class="kpi-grid">
           <div class="kpi-card tone-success">
             <div class="kpi-top"><span class="kpi-label">Tax Residency Status</span><span class="badge badge-success">Resident</span></div>
-            <div class="kpi-val">Bangkok, TH</div>
+            <div class="kpi-val" style="font-size: 1.85rem;">Bangkok, TH</div>
             <div class="kpi-sub">Physical presence >180 days in calendar year 2026</div>
           </div>
 
           <div class="kpi-card tone-primary">
             <div class="kpi-top"><span class="kpi-label">Tax ID (TIN)</span><span class="badge badge-info">Verified</span></div>
-            <div class="kpi-val num" style="font-size: 1.35rem;">0991003515691</div>
+            <div class="kpi-val num" style="font-size: 1.6rem;">0991003515691</div>
             <div class="kpi-sub">Bangkok Revenue Office Area 3</div>
           </div>
 
           <div class="kpi-card tone-warning">
             <div class="kpi-top"><span class="kpi-label">Filing Window</span><span class="badge badge-warning">P.N.D.90/91</span></div>
-            <div class="kpi-val">Jan – Mar 2027</div>
+            <div class="kpi-val" style="font-size: 1.85rem;">Jan – Mar 2027</div>
             <div class="kpi-sub">Online e-filing deadline extends to 8 April 2027</div>
           </div>
 
@@ -1289,12 +1511,12 @@
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 Paw 161 & 162/2566 Remittance Verdict Engine
               </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.25rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem;">
               <div>
                 <label class="form-label">Fund Vintage (Earned)</label>
                 <select class="form-control" id="thai-vintage">
@@ -1316,7 +1538,7 @@
               </div>
             </div>
 
-            <div id="thai-verdict-box" style="border: 1px solid var(--border); border-radius: 0.5rem; padding: 1.25rem; background-color: var(--muted);">
+            <div id="thai-verdict-box" style="border: 1px solid var(--border); border-radius: 0.5rem; padding: 1.4rem; background-color: var(--muted);">
               <!-- Populated dynamically -->
             </div>
           </div>
@@ -1325,7 +1547,7 @@
           <div class="panel">
             <div class="panel-header">
               <div class="panel-title">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
                 Thai Progressive PIT Brackets
               </div>
               <span class="badge badge-info">2026 Schedule</span>
@@ -1335,10 +1557,10 @@
               <table>
                 <thead>
                   <tr>
-                    <th>Taxable Net Income (THB)</th>
+                    <th>Taxable Net (THB)</th>
                     <th style="text-align: right;">Rate</th>
                     <th style="text-align: right;">Bracket Tax</th>
-                    <th style="text-align: right;">Cumulative Max</th>
+                    <th style="text-align: right;">Cap</th>
                   </tr>
                 </thead>
                 <tbody id="brackets-tbody">
@@ -1353,7 +1575,7 @@
         <div class="panel">
           <div class="panel-header">
             <div class="panel-title">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 10h.01"/><path d="M12 14h.01"/><path d="M8 14h.01"/><path d="M12 18h.01"/><path d="M8 18h.01"/></svg>
               Thai PIT Deduction & Net Tax Calculator
             </div>
             <button class="btn btn-sm btn-primary" id="btn-save-tax-calc">Save Deduction Scenario</button>
@@ -1364,7 +1586,7 @@
               <div class="form-group">
                 <label class="form-label">Total Remitted Assessable Income (THB)</label>
                 <input type="number" class="form-control num" id="calc-gross-income" value="1560000" step="10000">
-                <div style="font-size: 0.725rem; color: var(--muted-foreground); margin-top: 0.25rem;">Equivalent to approx. A$66,380 or $45,780</div>
+                <div style="font-size: 0.85rem; color: var(--muted-foreground); margin-top: 0.35rem;">Equivalent to approx. A$66,380 or $45,780</div>
               </div>
 
               <div class="form-group">
@@ -1382,7 +1604,7 @@
               <div class="form-group">
                 <label class="form-label">Social Security Office (SSO)</label>
                 <input type="number" class="form-control num" id="calc-sso" value="9000" max="9000">
-                <div style="font-size: 0.725rem; color: var(--muted-foreground); margin-top: 0.25rem;">Max 9,000 THB/year</div>
+                <div style="font-size: 0.85rem; color: var(--muted-foreground); margin-top: 0.35rem;">Max 9,000 THB/year</div>
               </div>
 
               <div class="form-group">
@@ -1407,16 +1629,16 @@
                 <input type="number" class="form-control num" id="calc-donation" value="10000" step="1000">
               </div>
 
-              <div style="background: var(--muted); padding: 1rem; border-radius: 0.5rem; border: 1px solid var(--border); margin-top: 0.5rem;">
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.35rem;">
+              <div style="background: var(--muted); padding: 1.25rem; border-radius: 0.5rem; border: 1px solid var(--border); margin-top: 0.5rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.45rem;">
                   <span>Total Deductions:</span>
                   <span class="num font-bold" id="res-total-deductions">374,000 THB</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 0.35rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.45rem;">
                   <span>Net Taxable Income:</span>
                   <span class="num font-bold" id="res-net-taxable">1,186,000 THB</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: 700; color: var(--primary); border-top: 1px solid var(--border); padding-top: 0.5rem;">
+                <div style="display: flex; justify-content: space-between; font-size: 1.15rem; font-weight: 800; color: var(--primary); border-top: 1px solid var(--border); padding-top: 0.65rem;">
                   <span>Tax Liability:</span>
                   <span class="num" id="res-tax-due">฿161,500</span>
                 </div>
@@ -1429,13 +1651,13 @@
         <div class="panel">
           <div class="panel-header">
             <div class="panel-title">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-              Wise Remittance Audit Log
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+              Wise Remittance Audit Log (Master Financial Ledger)
             </div>
             <button class="btn btn-sm btn-primary" id="btn-add-remit">+ Record Remittance</button>
           </div>
 
-          <div class="table-container">
+          <div class="table-container desktop-table-view">
             <table>
               <thead>
                 <tr>
@@ -1453,6 +1675,10 @@
               </tbody>
             </table>
           </div>
+
+          <div class="mobile-cards-view" id="remits-mobile-cards">
+            <!-- Mobile Remittance Cards -->
+          </div>
         </div>
       </section>
 
@@ -1465,52 +1691,52 @@
         </div>
 
         <!-- Fleet Equipment Cards -->
-        <div class="grid-3" style="margin-bottom: 1.5rem;">
+        <div class="grid-3" style="margin-bottom: 1.75rem;">
           <div class="panel" style="margin-bottom: 0;">
-            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.85rem;">
               <div>
-                <div style="font-weight: 700; font-size: 1.05rem;">Line Boat MV COM 4</div>
-                <div style="font-size: 0.75rem; color: var(--muted-foreground);">UVI 464237 · 12.2m Workboat</div>
+                <div style="font-weight: 800; font-size: 1.2rem;">Line Boat MV COM 4</div>
+                <div style="font-size: 0.85rem; color: var(--muted-foreground);">UVI 464237 · 12.2m Workboat</div>
               </div>
               <span class="badge badge-success">Active Charter</span>
             </div>
-            <dl style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.8rem; margin: 0.85rem 0;">
-              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Charterer</dt><dd class="font-medium">Pacific Marine</dd></div>
-              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Rate (ex-GST)</dt><dd class="font-medium num">A$6,500 / qtr</dd></div>
-              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Annual Revenue</dt><dd class="font-medium num text-primary">A$26,000 / yr</dd></div>
-              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Utilization</dt><dd class="font-medium num text-success">98.5%</dd></div>
+            <dl style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; font-size: 0.9rem; margin: 1rem 0;">
+              <div><dt style="color: var(--muted-foreground); font-size: 0.8rem; font-weight: 600;">Charterer</dt><dd class="font-bold">Pacific Marine</dd></div>
+              <div><dt style="color: var(--muted-foreground); font-size: 0.8rem; font-weight: 600;">Rate (ex-GST)</dt><dd class="font-bold num">A$6,500 / qtr</dd></div>
+              <div><dt style="color: var(--muted-foreground); font-size: 0.8rem; font-weight: 600;">Annual Revenue</dt><dd class="font-bold num text-primary">A$26,000 / yr</dd></div>
+              <div><dt style="color: var(--muted-foreground); font-size: 0.8rem; font-weight: 600;">Utilization</dt><dd class="font-bold num text-success">98.5%</dd></div>
             </dl>
           </div>
 
           <div class="panel" style="margin-bottom: 0;">
-            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.85rem;">
               <div>
-                <div style="font-weight: 700; font-size: 1.05rem;">Port Adelaide Hire (PAHE)</div>
-                <div style="font-size: 0.75rem; color: var(--muted-foreground);">4x Spud Barges & Heavy Rigging</div>
+                <div style="font-weight: 800; font-size: 1.2rem;">Port Adelaide Hire (PAHE)</div>
+                <div style="font-size: 0.85rem; color: var(--muted-foreground);">4x Spud Barges & Heavy Rigging</div>
               </div>
               <span class="badge badge-success">Guaranteed ROI</span>
             </div>
-            <dl style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.8rem; margin: 0.85rem 0;">
-              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Contract Type</dt><dd class="font-medium">Equipment Guarantee</dd></div>
-              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Annual Yield</dt><dd class="font-medium num text-primary">A$20,000 / yr</dd></div>
-              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Gross Invoiced</dt><dd class="font-medium num">A$22,000 (inc GST)</dd></div>
-              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Status</dt><dd class="font-medium text-success">Paid FY27</dd></div>
+            <dl style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; font-size: 0.9rem; margin: 1rem 0;">
+              <div><dt style="color: var(--muted-foreground); font-size: 0.8rem; font-weight: 600;">Contract Type</dt><dd class="font-bold">Equipment Guarantee</dd></div>
+              <div><dt style="color: var(--muted-foreground); font-size: 0.8rem; font-weight: 600;">Annual Yield</dt><dd class="font-bold num text-primary">A$20,000 / yr</dd></div>
+              <div><dt style="color: var(--muted-foreground); font-size: 0.8rem; font-weight: 600;">Gross Invoiced</dt><dd class="font-bold num">A$22,000 (inc GST)</dd></div>
+              <div><dt style="color: var(--muted-foreground); font-size: 0.8rem; font-weight: 600;">Status</dt><dd class="font-bold text-success">Paid FY27</dd></div>
             </dl>
           </div>
 
           <div class="panel" style="margin-bottom: 0;">
-            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.75rem;">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.85rem;">
               <div>
-                <div style="font-weight: 700; font-size: 1.05rem;">Newcastle Hire (NEWCHE)</div>
-                <div style="font-size: 0.75rem; color: var(--muted-foreground);">Modular Pontoons & Anchors</div>
+                <div style="font-weight: 800; font-size: 1.2rem;">Newcastle Hire (NEWCHE)</div>
+                <div style="font-size: 0.85rem; color: var(--muted-foreground);">Modular Pontoons & Anchors</div>
               </div>
               <span class="badge badge-info">Standby Reserve</span>
             </div>
-            <dl style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.8rem; margin: 0.85rem 0;">
-              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Location</dt><dd class="font-medium">Newcastle Wharf</dd></div>
-              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Condition</dt><dd class="font-medium">Survey Grade A</dd></div>
-              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Maintenance Due</dt><dd class="font-medium">March 2027</dd></div>
-              <div><dt style="color: var(--muted-foreground); font-size: 0.725rem;">Insurance</dt><dd class="font-medium text-success">Lloyds Covered</dd></div>
+            <dl style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem; font-size: 0.9rem; margin: 1rem 0;">
+              <div><dt style="color: var(--muted-foreground); font-size: 0.8rem; font-weight: 600;">Location</dt><dd class="font-bold">Newcastle Wharf</dd></div>
+              <div><dt style="color: var(--muted-foreground); font-size: 0.8rem; font-weight: 600;">Condition</dt><dd class="font-bold">Survey Grade A</dd></div>
+              <div><dt style="color: var(--muted-foreground); font-size: 0.8rem; font-weight: 600;">Maintenance Due</dt><dd class="font-bold">March 2027</dd></div>
+              <div><dt style="color: var(--muted-foreground); font-size: 0.8rem; font-weight: 600;">Insurance</dt><dd class="font-bold text-success">Lloyds Covered</dd></div>
             </dl>
           </div>
         </div>
@@ -1519,23 +1745,23 @@
         <div class="panel">
           <div class="panel-header">
             <div class="panel-title">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-              Master Invoicing & BAS Ledger
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              Business Ledger & BAS Tracking (Master Financial Ledger)
             </div>
             <button class="btn btn-sm btn-primary" id="btn-add-invoice">+ Create Invoice</button>
           </div>
 
-          <div class="table-container">
+          <div class="table-container desktop-table-view">
             <table>
               <thead>
                 <tr>
-                  <th>Invoice ID</th>
+                  <th>Transaction ID</th>
                   <th>Date</th>
                   <th>Description</th>
-                  <th>Client / Entity</th>
+                  <th>Vendor / Entity</th>
                   <th style="text-align: right;">Revenue (ex-GST)</th>
                   <th style="text-align: right;">GST 10% (Box 1A)</th>
-                  <th style="text-align: right;">Gross Invoiced</th>
+                  <th style="text-align: right;">Gross Total</th>
                   <th>Status</th>
                   <th style="text-align: center;">Action</th>
                 </tr>
@@ -1544,6 +1770,10 @@
                 <!-- populated dynamically -->
               </tbody>
             </table>
+          </div>
+
+          <div class="mobile-cards-view" id="invoices-mobile-cards">
+            <!-- Mobile Invoices Cards -->
           </div>
         </div>
       </section>
@@ -1559,11 +1789,11 @@
         <div class="panel">
           <div class="panel-header">
             <div class="panel-title">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/></svg>
               Upcoming Milestones & Deadlines
             </div>
-            <div style="display: flex; gap: 0.5rem;">
-              <select class="form-control" id="calendar-filter" style="width: 140px; padding: 0.35rem 0.65rem; font-size: 0.8rem;">
+            <div style="display: flex; gap: 0.65rem;">
+              <select class="form-control" id="calendar-filter" style="width: 160px; padding: 0.45rem 0.85rem; font-size: 0.9rem;">
                 <option value="All">All Categories</option>
                 <option value="Dividend">Dividends</option>
                 <option value="ATO">ATO BAS</option>
@@ -1574,7 +1804,7 @@
             </div>
           </div>
 
-          <div style="display: flex; flex-direction: column; gap: 0.75rem;" id="calendar-event-list">
+          <div style="display: flex; flex-direction: column; gap: 0.95rem;" id="calendar-event-list">
             <!-- populated dynamically -->
           </div>
         </div>
@@ -1593,24 +1823,24 @@
             <!-- Messages populated dynamically -->
           </div>
 
-          <!-- Suggested Chips -->
+          <!-- Suggested Chips (horizontally scrollable on mobile) -->
           <div class="chat-chips">
-            <span style="font-size: 0.75rem; color: var(--muted-foreground); margin-right: 0.25rem;">Suggested:</span>
-            <button class="chip-btn" data-q="Where should this month's dividend distribution go based on sleeve drift?">Where to reinvest this month's dividends?</button>
+            <span style="font-size: 0.85rem; font-weight: 700; color: var(--muted-foreground); margin-right: 0.4rem; align-self: center;">Suggested:</span>
+            <button class="chip-btn" data-q="Where should this month's dividend distribution go based on sleeve drift?">Where to reinvest this month?</button>
             <button class="chip-btn" data-q="How much GST will I report at Box 1A for Q1 FY27?">How much GST for Q1 FY27 BAS?</button>
-            <button class="chip-btn" data-q="Is remitting my 2026 charter income to Thailand this year taxable?">Is 2026 charter remittance taxable in TH?</button>
-            <button class="chip-btn" data-q="What is my projected portfolio value in 5 years with DRIP enabled?">5-year DRIP projection summary</button>
+            <button class="chip-btn" data-q="Is remitting my 2026 charter income to Thailand this year taxable?">Is 2026 charter remittance taxable?</button>
+            <button class="chip-btn" data-q="What is my projected portfolio value in 5 years with DRIP enabled?">5-year DRIP projection</button>
           </div>
 
           <!-- Input Box -->
           <div class="chat-input-area">
             <input type="text" class="chat-input" id="chat-input" placeholder="Ask Spark Advisor about your portfolio, cash flow, or tax rules...">
             <button class="btn btn-primary" id="btn-send-chat">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" x2="11" y1="2" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
               <span>Send</span>
             </button>
             <button class="btn" id="btn-clear-chat" title="Clear chat history">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
             </button>
           </div>
         </div>
@@ -1618,30 +1848,30 @@
     </main>
   </div>
 
-  <!-- Mobile Bottom Nav -->
+  <!-- Mobile Bottom Navigation Bar (Touch-friendly & Safe Area Aware) -->
   <nav id="mobile-bottom-nav">
     <div class="bottom-nav-item active" data-tab="overview">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/></svg>
       <span>Overview</span>
     </div>
     <div class="bottom-nav-item" data-tab="projections">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/></svg>
       <span>Growth</span>
     </div>
     <div class="bottom-nav-item" data-tab="thaitax">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" x2="12" y1="6" y2="18"/><polygon points="2 6 12 2 22 6 22 22 2 22 2 6"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" x2="12" y1="6" y2="18"/><polygon points="2 6 12 2 22 6 22 22 2 22 2 6"/></svg>
       <span>Tax</span>
     </div>
     <div class="bottom-nav-item" data-tab="marine">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>
       <span>Marine</span>
     </div>
     <div class="bottom-nav-item" data-tab="calendar">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2"/></svg>
       <span>Schedule</span>
     </div>
     <div class="bottom-nav-item" data-tab="advisor">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="16" height="12" x="4" y="8" rx="2"/></svg>
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="16" height="12" x="4" y="8" rx="2"/></svg>
       <span>Advisor</span>
     </div>
   </nav>
@@ -1702,7 +1932,7 @@
       <div class="modal-body">
         <div class="form-group">
           <label class="form-label">Invoice ID</label>
-          <input type="text" class="form-control" id="inv-id" value="INV00010">
+          <input type="text" class="form-control" id="inv-id" value="TXN-2026-004">
         </div>
         <div class="form-group">
           <label class="form-label">Invoice Date</label>
@@ -1710,11 +1940,11 @@
         </div>
         <div class="form-group">
           <label class="form-label">Service Description</label>
-          <input type="text" class="form-control" id="inv-desc" placeholder="e.g. Quarterly Bareboat Charter — MV COM 4 (Q3 FY27)">
+          <input type="text" class="form-control" id="inv-desc" placeholder="e.g. Bareboat Charter OND 2026 (MV COM 4 - Q2 FY27)">
         </div>
         <div class="form-group">
           <label class="form-label">Client / Charterer</label>
-          <input type="text" class="form-control" id="inv-client" value="Pacific Marine Pty Ltd">
+          <input type="text" class="form-control" id="inv-client" value="SHIPAUS Pty Ltd">
         </div>
         <div class="form-group">
           <label class="form-label">Ex-GST Revenue (AUD)</label>
@@ -1759,15 +1989,15 @@
         </div>
         <div class="form-group">
           <label class="form-label">Transfer Description / Source</label>
-          <input type="text" class="form-control" id="remit-nature" placeholder="e.g. Dividend sweep CMC Markets">
+          <input type="text" class="form-control" id="remit-nature" placeholder="e.g. Dividend sweep Bangkok Bank">
         </div>
         <div class="form-group">
           <label class="form-label">Source Amount (AUD or USD)</label>
-          <input type="text" class="form-control" id="remit-source-amt" placeholder="e.g. A$5,000 @ 23.45">
+          <input type="text" class="form-control" id="remit-source-amt" placeholder="e.g. 2500.00 AUD">
         </div>
         <div class="form-group">
           <label class="form-label">THB Received</label>
-          <input type="number" class="form-control num" id="remit-thb" placeholder="e.g. 117250">
+          <input type="number" class="form-control num" id="remit-thb" placeholder="e.g. 58750">
         </div>
       </div>
       <div class="modal-footer">
@@ -1816,126 +2046,19 @@
 
   <!-- Toast Element -->
   <div id="toast">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--success);"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--success); flex-shrink: 0;"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
     <span id="toast-text">Data synced successfully.</span>
   </div>
 
   <script>
-    // --- Direct Export & Core Financial Utilities (matching finance-utils.ts) ---
-    function calculatePortfolioKPIs(holdingsList) {
-      const totalValue = holdingsList.reduce((sum, h) => sum + (h.shares || h.units) * (h.currentPrice || h.live * 1.45), 0);
-      const totalCost = holdingsList.reduce((sum, h) => sum + (h.shares || h.units) * (h.avgCost || h.costAud), 0);
-      const totalGainLoss = totalValue - totalCost;
-      const totalGainLossPct = totalCost > 0 ? (totalGainLoss / totalCost) * 100 : 0;
-      const projectedAnnualIncome = holdingsList.reduce((sum, h) => {
-        const p = h.currentPrice || (h.live * 1.45);
-        const y = h.annualDividendYield !== undefined ? h.annualDividendYield : ((h.div * 12) / (h.mv || 1));
-        return sum + (h.shares || h.units) * p * y;
-      }, 0);
-      const projectedMonthlyIncome = projectedAnnualIncome / 12;
-
-      return {
-        totalValue,
-        totalCost,
-        totalGainLoss,
-        totalGainLossPct,
-        projectedAnnualIncome,
-        projectedMonthlyIncome,
-      };
-    }
-
-    function generateProjections(params) {
-      const {
-        initialValue,
-        monthlyContribution,
-        annualYield,
-        annualGrowthRate,
-        years,
-        reinvestDividends,
-      } = params;
-
-      const data = [];
-      let currentValue = initialValue;
-      let totalInvested = initialValue;
-
-      for (let y = 1; y <= years; y++) {
-        for (let m = 1; m <= 12; m++) {
-          currentValue += monthlyContribution;
-          totalInvested += monthlyContribution;
-          currentValue *= 1 + annualGrowthRate / 12;
-          const monthlyDiv = (currentValue * annualYield) / 12;
-          if (reinvestDividends) {
-            currentValue += monthlyDiv;
-          }
-        }
-
-        data.push({
-          year: y,
-          portfolioValue: Math.round(currentValue),
-          annualIncome: Math.round(currentValue * annualYield),
-          totalInvested: Math.round(totalInvested),
-        });
-      }
-
-      return data;
-    }
-
-    function calculateThaiTax(input) {
-      const standardExpense = Math.min(
-        input.annualAssessableIncomeTHB * 0.5,
-        input.standardExpenseDeductionTHB !== undefined ? input.standardExpenseDeductionTHB : 100000
-      );
-      const personalAllowance = input.personalAllowanceTHB !== undefined ? input.personalAllowanceTHB : 60000;
-      const otherDeductions = input.additionalDeductionsTHB !== undefined ? input.additionalDeductionsTHB : 0;
-
-      const totalDeductions = standardExpense + personalAllowance + otherDeductions;
-      const taxableIncome = Math.max(0, input.annualAssessableIncomeTHB - totalDeductions);
-
-      const brackets = [
-        { limit: 150000, rate: 0.0 },
-        { limit: 300000, rate: 0.05 },
-        { limit: 500000, rate: 0.1 },
-        { limit: 750000, rate: 0.15 },
-        { limit: 1000000, rate: 0.2 },
-        { limit: 2000000, rate: 0.25 },
-        { limit: 5000000, rate: 0.3 },
-        { limit: Infinity, rate: 0.35 },
-      ];
-
-      let tax = 0;
-      let previousLimit = 0;
-
-      for (const b of brackets) {
-        if (taxableIncome > previousLimit) {
-          const taxableInBracket = Math.min(taxableIncome, b.limit) - previousLimit;
-          tax += taxableInBracket * b.rate;
-          previousLimit = b.limit;
-        } else {
-          break;
-        }
-      }
-
-      const effectiveRate = input.annualAssessableIncomeTHB > 0
-        ? (tax / input.annualAssessableIncomeTHB) * 100
-        : 0;
-
-      return {
-        assessableIncome: input.annualAssessableIncomeTHB,
-        totalDeductions,
-        taxableIncome,
-        taxPayableTHB: Math.round(tax),
-        effectiveRate: Number(effectiveRate.toFixed(2)),
-      };
-    }
-
-    // --- Application State Management (Backed by localStorage) ---
+    // --- Master Financial Ledger Data (1,868 Verified Units) ---
     const FX_RATES = {
       AUD: 1.0,
-      USD: 0.69,
+      USD: 0.697,
       THB: 23.50
     };
 
-        const DEFAULT_HOLDINGS = [
+    const DEFAULT_HOLDINGS = [
       { ticker: "BTCI:US", name: "NEOS Bitcoin High Income ETF", sleeve: "Crypto", units: 633, shares: 633, costUsd: 34.12, costAud: 49.05, avgCost: 49.05, live: 32.94, currentPrice: 47.24, mv: 29903.57, weight: 28.60, divRate: 0.7184, div: 554.35, annualDividendYield: 0.222 },
       { ticker: "NEHI:US", name: "NEOS Ethereum High Income ETF", sleeve: "Crypto", units: 590, shares: 590, costUsd: 32.06, costAud: 45.34, avgCost: 45.34, live: 31.07, currentPrice: 44.56, mv: 26289.91, weight: 25.14, divRate: 0.8721, div: 627.24, annualDividendYield: 0.286 },
       { ticker: "IAUI:US", name: "NEOS Gold High Income ETF", sleeve: "Gold", units: 254, shares: 254, costUsd: 56.39, costAud: 80.23, avgCost: 80.23, live: 48.05, currentPrice: 68.91, mv: 17503.42, weight: 16.74, divRate: 0.5011, div: 155.16, annualDividendYield: 0.106 },
@@ -1944,32 +2067,32 @@
     ];
 
     const DEFAULT_INVOICES = [
-      { id: "INV00001", date: "2025-07-01", desc: "Quarterly Bareboat Charter — MV COM 4 (Q1 FY26)", client: "Pacific Marine", ex: 6500, status: "Paid" },
-      { id: "INV00002", date: "2025-07-01", desc: "Annual ROI Equipment Guarantee — PAHE / NEWCHE FY26", client: "Port Adelaide Hire", ex: 20000, status: "Paid" },
-      { id: "INV00003", date: "2025-10-01", desc: "Quarterly Bareboat Charter — MV COM 4 (Q2 FY26)", client: "Pacific Marine", ex: 6500, status: "Paid" },
-      { id: "INV00004", date: "2026-01-01", desc: "Quarterly Bareboat Charter — MV COM 4 (Q3 FY26)", client: "Pacific Marine", ex: 6500, status: "Paid" },
-      { id: "INV00005", date: "2026-04-01", desc: "Quarterly Bareboat Charter — MV COM 4 (Q4 FY26)", client: "Pacific Marine", ex: 6500, status: "Paid" },
-      { id: "INV00006", date: "2026-07-01", desc: "Quarterly Bareboat Charter — MV COM 4 (Q1 FY27)", client: "Pacific Marine", ex: 6500, status: "Paid" },
-      { id: "INV00007", date: "2026-07-01", desc: "Annual ROI Equipment Guarantee — PAHE / NEWCHE FY27", client: "Port Adelaide Hire", ex: 20000, status: "Settled" },
-      { id: "INV00008", date: "2026-08-15", desc: "Equipment hire reconciliation — Port Adelaide", client: "Port Adelaide Hire", ex: 0, status: "Settled" },
-      { id: "INV00009", date: "2026-10-01", desc: "Quarterly Bareboat Charter — MV COM 4 (Q2 FY27)", client: "Pacific Marine", ex: 6500, status: "Settled" },
+      { id: "TXN-2024-001", date: "2024-10-01", vendor: "SHIPAUS Pty Ltd", desc: "Bareboat Charter JAS 2024 (MV COM 4 - Q1 FY25)", ex: 6500, gst: 650, total: 7150, category: "Vessel_Charter_Income", link: "https://drive.google.com/file/d/10HZyCEY7NvxMVkpE-FOnebMxlOVED8zt/view?usp=drivesdk", status: "Paid" },
+      { id: "TXN-2024-002", date: "2024-12-27", vendor: "SHIPAUS Pty Ltd", desc: "Bareboat Charter OND 2024 (MV COM 4 - Q2 FY25)", ex: 6500, gst: 650, total: 7150, category: "Vessel_Charter_Income", link: "https://drive.google.com/file/d/1qcEB9oMCa4UN9OYcnUN2WOZHmEAfyWKs/view?usp=drivesdk", status: "Paid" },
+      { id: "TXN-2025-001", date: "2025-03-20", vendor: "SHIPAUS Pty Ltd", desc: "Bareboat Charter JFM 2025 (MV COM 4 - Q3 FY25)", ex: 6500, gst: 650, total: 7150, category: "Vessel_Charter_Income", link: "https://drive.google.com/file/d/1DJeDWPwanKLUtrqnzT_fixS52Qhcxsfq/view?usp=drivesdk", status: "Paid" },
+      { id: "TXN-2025-002", date: "2025-06-18", vendor: "SHIPAUS Pty Ltd", desc: "Bareboat Charter AMJ 2025 (MV COM 4 - Q4 FY25)", ex: 6500, gst: 650, total: 7150, category: "Vessel_Charter_Income", link: "https://drive.google.com/file/d/1RR9s3XT0Uos6QfNNk_Li7CuSIq-9a26_/view?usp=drivesdk", status: "Paid" },
+      { id: "TXN-2025-003", date: "2025-06-18", vendor: "SHIPAUS Pty Ltd", desc: "Annual ROI 2025 (PAHE & NEWCHE Equipment Hire - FY25)", ex: 20000, gst: 2000, total: 22000, category: "Equipment_Hire_Income", link: "https://drive.google.com/file/d/1Suu4U02Rgehi2A8CrlB7WpApzvPNv4Hf/view?usp=drivesdk", status: "Paid" },
+      { id: "TXN-2025-004", date: "2025-09-12", vendor: "SHIPAUS Pty Ltd", desc: "Bareboat Charter JAS 2025 (MV COM 4 - Q1 FY26)", ex: 6500, gst: 650, total: 7150, category: "Vessel_Charter_Income", link: "https://drive.google.com/file/d/1fB74ECd0EkLUHH0AocqJR4j4091rlDn6/view?usp=drivesdk", status: "Paid" },
+      { id: "TXN-2025-005", date: "2025-12-15", vendor: "SHIPAUS Pty Ltd", desc: "Bareboat Charter OND 2025 (MV COM 4 - Q2 FY26)", ex: 6500, gst: 650, total: 7150, category: "Vessel_Charter_Income", link: "https://drive.google.com/file/d/1n2n63w3eHpy3vvdKB8BZc_EUStY7e53j/view?usp=drivesdk", status: "Paid" },
+      { id: "TXN-2026-001", date: "2026-03-16", vendor: "SHIPAUS Pty Ltd", desc: "Bareboat Charter JFM 2026 (MV COM 4 - Q3 FY26)", ex: 6500, gst: 650, total: 7150, category: "Vessel_Charter_Income", link: "https://drive.google.com/file/d/1Nj2SZvCn3T349vALHbLmqN-w3ywLu9Bu/view?usp=drivesdk", status: "Paid" },
+      { id: "TXN-2026-002", date: "2026-03-16", vendor: "SHIPAUS Pty Ltd", desc: "Annual ROI 2026 (PAHE & NEWCHE Equipment Hire - FY26)", ex: 20000, gst: 2000, total: 22000, category: "Equipment_Hire_Income", link: "https://drive.google.com/file/d/1tlUSX7DBeqTO9VpivGeNQkHzk4_iYS9e/view?usp=drivesdk", status: "Paid" },
+      { id: "TXN-2026-003", date: "2026-04-18", vendor: "CMC Markets Stockbroking Limited", desc: "Tax Tools Plus Annual Subscription (INV-202642693)", ex: 90, gst: 9, total: 99, category: "Software_Subscription_Expense", link: "https://mail.google.com/mail/?authuser=ollycav@gmail.com#all/thread-f:1878088374411574695", status: "Paid" },
     ];
 
     const DEFAULT_REMITTANCES = [
-      { date: "2023-11-14", nature: "Savings capital transfer", vintage: "Pre-2024", sourceAmt: "A$18,000 @ 23.10", thb: 415800, status: "Exempt" },
-      { date: "2024-06-03", nature: "Accumulated 2023 savings", vintage: "Pre-2024", sourceAmt: "A$9,500 @ 23.25", thb: 220875, status: "Exempt" },
-      { date: "2025-02-20", nature: "FY24 charter income", vintage: "2024", sourceAmt: "A$6,200 @ 23.40", thb: 145080, status: "Assessable" },
-      { date: "2025-09-11", nature: "NEOS distributions sweep", vintage: "2025", sourceAmt: "A$4,800 @ 23.55", thb: 113040, status: "Assessable" },
-      { date: "2026-03-05", nature: "Bareboat Q3 FY26 remittance", vintage: "2026", sourceAmt: "A$7,150 @ 23.60", thb: 168740, status: "Assessable" },
-      { date: "2026-08-22", nature: "Dividend sweep Bangkok Bank", vintage: "2026", sourceAmt: "A$5,400 @ 23.50", thb: 126900, status: "Assessable" },
+      { date: "2025-01-15", nature: "Educational Publishing Royalties", vintage: "2024", sourceAmt: "1500.00 USD @ 34.5", thb: 51750, link: "https://drive.google.com/file/d/1j80OYJek0H1NhmASwGyIJJJVngkCJ09R/view?usp=drivesdk", status: "Remitted_Documented" },
+      { date: "2025-04-10", nature: "Educational Publishing Royalties", vintage: "2024", sourceAmt: "2000.00 USD @ 36.2", thb: 72400, link: "https://drive.google.com/file/d/1j80OYJek0H1NhmASwGyIJJJVngkCJ09R/view?usp=drivesdk", status: "Remitted_Documented" },
+      { date: "2025-07-22", nature: "Grandfathered Savings Pre-2024", vintage: "Pre-2024", sourceAmt: "3000.00 AUD @ 23.6", thb: 70800, link: "https://drive.google.com/file/d/19cZrViei0QAXzDeent2s3kf13XUWXoDs/view?usp=drivesdk", status: "Exempt (Paw 162)" },
+      { date: "2025-10-18", nature: "Educational Publishing Royalties", vintage: "2025", sourceAmt: "2500.00 USD @ 36.5", thb: 91250, link: "https://drive.google.com/file/d/1j80OYJek0H1NhmASwGyIJJJVngkCJ09R/view?usp=drivesdk", status: "Remitted_Documented" },
+      { date: "2026-02-14", nature: "Commercial Vessel Lease Income", vintage: "2025", sourceAmt: "2500.00 AUD @ 23.5", thb: 58750, link: "https://drive.google.com/file/d/19cZrViei0QAXzDeent2s3kf13XUWXoDs/view?usp=drivesdk", status: "Remitted_Documented" },
     ];
 
     const DEFAULT_EVENTS = [
-      { date: "2026-10-21", title: "NEOS Distribution Declaration", note: "Approximate monthly declaration for BTCI, NEHI, IAUI, SPYI, QQQI", kind: "Dividend" },
+      { date: "2026-10-21", title: "NEOS Distribution Declaration (BTCI, NEHI, IAUI, SPYI, QQQI)", note: "Monthly declaration across 1,868 units (~A$1,615 AUD)", kind: "Dividend" },
       { date: "2026-11-18", title: "BAS Audit Review", note: "Pre-lodgement review of Q1 FY27 GST reporting", kind: "ATO" },
       { date: "2026-11-25", title: "BAS Q1 FY27 Due (ATO)", note: "GST Box 1A lodgement & payment for Jul – Sep 2026", kind: "ATO" },
       { date: "2026-12-20", title: "NEOS Year-End Distribution", note: "Final dividend payment date for calendar year 2026", kind: "Dividend" },
-      { date: "2027-01-01", title: "Thai PIT Filing Window Opens", note: "P.N.D.90/91 personal income tax for 2026 remittances", kind: "Thai" },
+      { date: "2027-01-01", title: "Thai PIT Filing Window Opens", note: "P.N.D.90/91 personal income tax for foreign remittances", kind: "Thai" },
       { date: "2027-01-05", title: "Marine Charter Q3 FY27 Invoicing", note: "MV COM 4 Quarterly Bareboat Charter A$7,150", kind: "Marine" },
       { date: "2027-02-28", title: "BAS Q2 FY27 Due (ATO)", note: "Quarterly GST for Oct – Dec 2026", kind: "ATO" },
       { date: "2027-03-31", title: "Thai PIT Filing Closes", note: "Paper deadline (e-filing deadline 8 April 2027)", kind: "Thai" },
@@ -1996,11 +2119,10 @@
       {
         id: "msg-1",
         role: "assistant",
-        text: "Good morning, Olly. I'm your **Spark Finance Advisor**. I have complete context on your NEOS ETF portfolio (A$108k), SHIPAUS marine charter operations, and Thai foreign remittance tax status (Orders Paw 161/162). How can I assist you today?"
+        text: "Good morning, Olly. I am your **Spark Finance Advisor**. I am connected directly to your **Master_Financial_Ledger** in Google Drive (1,868 verified NEOS units, SHIPAUS marine charter contracts, and Thai tax compliance records). How can I assist you today?"
       }
     ];
 
-    // LocalStorage helper functions
     function load(key, defaultVal) {
       try {
         const val = localStorage.getItem("spark_" + key);
@@ -2016,7 +2138,6 @@
       } catch (e) {}
     }
 
-    // State Variables
     let currentCurrency = load("currency", "AUD");
     let currentTheme = load("theme", "dark");
     let activeTab = load("activeTab", "overview");
@@ -2029,7 +2150,6 @@
     let chatMessages = load("chatMessages", DEFAULT_CHAT);
     let sidebarCollapsed = load("sidebarCollapsed", false);
 
-    // Currency Formatter
     function formatCurrency(amountAud, d = 0) {
       const rate = FX_RATES[currentCurrency] || 1.0;
       const converted = amountAud * rate;
@@ -2047,7 +2167,6 @@
       return num.toLocaleString(undefined, { minimumFractionDigits: d, maximumFractionDigits: d });
     }
 
-    // Toast Notification helper
     function showToast(msg) {
       const toast = document.getElementById("toast");
       document.getElementById("toast-text").innerText = msg;
@@ -2055,7 +2174,6 @@
       setTimeout(() => toast.classList.remove("show"), 3200);
     }
 
-    // Tab Navigation
     function switchTab(tabId) {
       activeTab = tabId;
       save("activeTab", tabId);
@@ -2064,7 +2182,6 @@
       const target = document.getElementById("tab-" + tabId);
       if (target) target.style.display = "block";
 
-      // Update Nav active classes
       document.querySelectorAll(".nav-item").forEach(item => {
         item.classList.toggle("active", item.getAttribute("data-tab") === tabId);
       });
@@ -2072,9 +2189,8 @@
         item.classList.toggle("active", item.getAttribute("data-tab") === tabId);
       });
 
-      // Update Breadcrumbs
       const titles = {
-        overview: "Dashboard / Portfolio",
+        overview: "Master_Financial_Ledger",
         projections: "Projections & DRIP",
         thaitax: "Thai Tax Engine",
         marine: "Marine Operations",
@@ -2083,7 +2199,6 @@
       };
       document.getElementById("breadcrumb-title").innerText = titles[tabId] || "Dashboard";
 
-      // Re-render current tab specific views if needed
       if (tabId === "overview") renderOverview();
       if (tabId === "projections") renderProjections();
       if (tabId === "thaitax") renderThaiTax();
@@ -2092,32 +2207,26 @@
       if (tabId === "advisor") renderChat();
     }
 
-    // --- Renderers ---
     function renderOverview() {
-      // Portfolio calculations using calculatePortfolioKPIs
-      const kpis = calculatePortfolioKPIs(holdings);
-      const totalCostAud = kpis.totalCost;
-      const totalMvAud = kpis.totalValue;
-      const totalGainAud = kpis.totalGainLoss;
-      const gainPct = kpis.totalGainLossPct;
-      const annualDivsAud = kpis.projectedAnnualIncome;
-      const monthlyDivsAud = kpis.projectedMonthlyIncome;
-
+      const totalCostAud = holdings.reduce((sum, h) => sum + (h.units * h.costAud), 0);
+      const totalMvAud = holdings.reduce((sum, h) => sum + h.mv, 0);
+      const totalGainAud = totalMvAud - totalCostAud;
+      const gainPct = (totalGainAud / totalCostAud) * 100;
+      const totalDivsAud = holdings.reduce((sum, h) => sum + h.div, 0);
+      const annualDivsAud = totalDivsAud * 12;
       const annualMarineAud = 46000;
       const totalAnnualIncomeAud = annualDivsAud + annualMarineAud;
       const monthlyMarineAud = annualMarineAud / 12;
-      const monthlyTotalAud = monthlyDivsAud + monthlyMarineAud;
+      const monthlyTotalAud = totalDivsAud + monthlyMarineAud;
 
-      // Update KPIs
       document.getElementById("kpi-total-val").innerText = formatCurrency(totalMvAud);
-      document.getElementById("kpi-total-sub").innerHTML = `Cost ${formatCurrency(totalCostAud)} · <span class="badge ${totalGainAud >= 0 ? "badge-success" : "badge-warning"}">${totalGainAud >= 0 ? "+" : ""}${formatCurrency(totalGainAud)} (${gainPct.toFixed(2)}%)</span>`;
+      document.getElementById("kpi-total-sub").innerHTML = `Cost ${formatCurrency(totalCostAud)} · <span class="badge ${totalGainAud >= 0 ? "badge-success" : "badge-warning"}">${totalGainAud >= 0 ? "+" : ""}${formatCurrency(totalGainAud)} (${gainPct.toFixed(2)}%)</span> · <span class="badge badge-info">1,868 Units</span>`;
 
       document.getElementById("kpi-annual-inc").innerText = formatCurrency(totalAnnualIncomeAud) + " / yr";
       document.getElementById("kpi-monthly-flow").innerText = formatCurrency(monthlyTotalAud) + " / mo";
-      document.getElementById("kpi-tax-est").innerText = formatCurrency(4600); // Box 1A GST
-      document.getElementById("route-cash-text").innerText = formatCurrency(monthlyDivsAud);
+      document.getElementById("kpi-tax-est").innerText = formatCurrency(4600);
+      document.getElementById("route-cash-text").innerText = formatCurrency(totalDivsAud);
 
-      // Sleeves & Allocation
       const sleeveTotals = { Crypto: 0, Equities: 0, Gold: 0 };
       holdings.forEach(h => {
         if (sleeveTotals[h.sleeve] !== undefined) sleeveTotals[h.sleeve] += h.mv;
@@ -2126,59 +2235,119 @@
       const sleeveList = document.getElementById("sleeve-list");
       sleeveList.innerHTML = "";
       const sleevesMeta = [
-        { name: "Crypto", target: "45-55%", color: "#f59e0b", status: "Overweight (~56%) — Pause Reinvestment" },
-        { name: "Equities", target: "30-35%", color: "#0284c7", status: "Underweight (~28%) — Priority Buy" },
-        { name: "Gold", target: "15-20%", color: "#10b981", status: "Balanced (~16%) — Holding Target" }
+        { name: "Crypto", target: "45-55%", color: "#f59e0b", status: "Balanced (~53.7%) — Reinvestment Normal" },
+        { name: "Equities", target: "30-35%", color: "#0284c7", status: "Underweight (~29.5%) — Primary Target" },
+        { name: "Gold", target: "15-20%", color: "#10b981", status: "Balanced (~16.7%) — Floor Preserved" }
       ];
 
       sleevesMeta.forEach(s => {
         const val = sleeveTotals[s.name] || 0;
         const pct = (val / totalMvAud) * 100;
         const div = document.createElement("div");
-        div.style.cssText = "display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem;";
+        div.style.cssText = "display: flex; justify-content: space-between; align-items: center; font-size: 0.95rem;";
         div.innerHTML = `
           <div>
-            <div style="font-weight: 600; display: flex; align-items: center; gap: 0.4rem;">
-              <span style="width: 8px; height: 8px; border-radius: 50%; background: ${s.color};"></span>
+            <div style="font-weight: 700; display: flex; align-items: center; gap: 0.5rem;">
+              <span style="width: 10px; height: 10px; border-radius: 50%; background: ${s.color};"></span>
               ${s.name}
             </div>
-            <div style="font-size: 0.725rem; color: var(--muted-foreground);">${s.status}</div>
+            <div style="font-size: 0.825rem; color: var(--muted-foreground); margin-top: 2px;">${s.status}</div>
           </div>
           <div style="text-align: right;">
-            <div class="num font-bold">${pct.toFixed(1)}%</div>
+            <div class="num font-bold" style="font-size: 1.05rem;">${pct.toFixed(1)}%</div>
             <div class="num text-xs text-muted-foreground">${formatCurrency(val)}</div>
           </div>
         `;
         sleeveList.appendChild(div);
       });
 
-      // Holdings Table
+      // Desktop Table
       const tbody = document.getElementById("holdings-tbody");
       tbody.innerHTML = "";
+
+      // Mobile Card List
+      const mobileCards = document.getElementById("holdings-mobile-cards");
+      mobileCards.innerHTML = "";
+
       holdings.forEach((h, idx) => {
-        const tr = document.createElement("tr");
         const weight = (h.mv / totalMvAud) * 100;
+
+        // Desktop Table Row
+        const tr = document.createElement("tr");
         tr.innerHTML = `
           <td>
-            <div style="font-weight: 600;">${h.ticker}</div>
-            <div style="font-size: 0.725rem; color: var(--muted-foreground);">${h.name || h.sleeve}</div>
+            <div style="font-weight: 700;">${h.ticker}</div>
+            <div style="font-size: 0.825rem; color: var(--muted-foreground);">${h.name}</div>
           </td>
           <td><span class="badge badge-muted">${h.sleeve}</span></td>
-          <td class="num" style="text-align: right;">${formatNumber(h.shares || h.units)}</td>
-          <td class="num" style="text-align: right;">$${(h.live || h.currentPrice / 1.45).toFixed(2)}</td>
-          <td class="num font-bold" style="text-align: right;">${formatCurrency(h.mv)}</td>
+          <td class="num" style="text-align: right; font-weight: 600;">${formatNumber(h.units)}</td>
+          <td class="num" style="text-align: right;">$${h.live.toFixed(2)}</td>
+          <td class="num font-bold" style="text-align: right; color: var(--foreground);">${formatCurrency(h.mv)}</td>
           <td class="num" style="text-align: right;">${weight.toFixed(1)}%</td>
-          <td class="num" style="text-align: right; color: var(--success);">${formatCurrency(h.div)}</td>
+          <td class="num font-semibold" style="text-align: right; color: var(--success);">${formatCurrency(h.div)}</td>
           <td style="text-align: center;">
             <button class="btn btn-sm btn-edit-holding" data-idx="${idx}" title="Edit asset">Edit</button>
             <button class="btn btn-sm btn-delete-holding" data-idx="${idx}" style="color: var(--destructive); margin-left: 4px;" title="Delete">Del</button>
           </td>
         `;
         tbody.appendChild(tr);
+
+        // Mobile Card
+        const card = document.createElement("div");
+        card.className = "mobile-card";
+        card.innerHTML = `
+          <div class="mobile-card-top">
+            <div>
+              <div style="font-size: 1.15rem; font-weight: 800; display: flex; align-items: center; gap: 0.5rem;">
+                ${h.ticker}
+                <span class="badge badge-muted">${h.sleeve}</span>
+              </div>
+              <div style="font-size: 0.85rem; color: var(--muted-foreground); margin-top: 2px;">${h.name}</div>
+            </div>
+            <div style="text-align: right;">
+              <div class="num font-bold" style="font-size: 1.15rem; color: var(--foreground);">$${h.live.toFixed(2)} <span style="font-size: 0.75rem; color: var(--muted-foreground);">USD</span></div>
+              <div class="num" style="font-size: 0.8rem; color: var(--success); font-weight: 600;">+${formatCurrency(h.div)}/mo</div>
+            </div>
+          </div>
+
+          <div style="margin: 0.65rem 0;">
+            <div style="display: flex; justify-content: space-between; font-size: 0.775rem; color: var(--muted-foreground); margin-bottom: 3px;">
+              <span>Portfolio Allocation</span>
+              <span class="num font-bold text-foreground">${weight.toFixed(1)}%</span>
+            </div>
+            <div style="height: 6px; border-radius: 9999px; background: var(--muted); overflow: hidden;">
+              <div style="width: ${Math.min(100, weight)}%; height: 100%; background: var(--primary);"></div>
+            </div>
+          </div>
+
+          <div class="mobile-card-grid">
+            <div>
+              <dt>Market Value</dt>
+              <dd class="num text-primary" style="font-size: 1.1rem;">${formatCurrency(h.mv)}</dd>
+            </div>
+            <div>
+              <dt>Units Held</dt>
+              <dd class="num">${formatNumber(h.units)}</dd>
+            </div>
+            <div>
+              <dt>Avg Cost</dt>
+              <dd class="num">${formatCurrency(h.costAud, 2)}</dd>
+            </div>
+            <div>
+              <dt>Est Monthly Div</dt>
+              <dd class="num text-success">${formatCurrency(h.div)}</dd>
+            </div>
+          </div>
+
+          <div class="mobile-card-actions">
+            <button class="btn btn-sm btn-edit-holding" data-idx="${idx}">Edit Holding</button>
+            <button class="btn btn-sm btn-delete-holding" data-idx="${idx}" style="color: var(--destructive);">Delete</button>
+          </div>
+        `;
+        mobileCards.appendChild(card);
       });
     }
 
-    // Projections Simulator Engine
     function renderProjections() {
       const yieldPct = parseFloat(document.getElementById("input-yield").value);
       const contrib = parseFloat(document.getElementById("input-contrib").value);
@@ -2192,58 +2361,110 @@
       document.getElementById("val-div-growth").innerText = divGrowth.toFixed(1) + "%";
 
       const totalMvAud = holdings.reduce((sum, h) => sum + h.mv, 0);
+      let balance = totalMvAud;
+      let totalContributed = totalMvAud;
+      let curYield = yieldPct / 100;
 
-      // Call generateProjections
-      const projResults = generateProjections({
-        initialValue: totalMvAud,
-        monthlyContribution: contrib,
-        annualYield: yieldPct / 100,
-        annualGrowthRate: divGrowth / 100,
-        years: years,
-        reinvestDividends: drip
+      const progression = [];
+      progression.push({
+        year: 0,
+        start: balance,
+        contrib: 0,
+        divs: 0,
+        end: balance,
+        totalContributed: totalContributed
       });
 
-      const finalYear = projResults[projResults.length - 1];
-      const finalPassiveAnnual = finalYear.annualIncome;
-      document.getElementById("proj-end-balance").innerText = formatCurrency(finalYear.portfolioValue);
+      for (let y = 1; y <= years; y++) {
+        const startYearBal = balance;
+        const annualContrib = contrib * 12;
+        let annualDivs = 0;
+
+        for (let m = 1; m <= 12; m++) {
+          const monthlyDiv = balance * (curYield / 12);
+          annualDivs += monthlyDiv;
+          if (drip) {
+            balance += monthlyDiv;
+          }
+          balance += contrib;
+        }
+
+        totalContributed += annualContrib;
+        curYield *= (1 + (divGrowth / 100));
+
+        progression.push({
+          year: y,
+          start: startYearBal,
+          contrib: annualContrib,
+          divs: annualDivs,
+          end: balance,
+          totalContributed: totalContributed
+        });
+      }
+
+      const finalYear = progression[progression.length - 1];
+      const finalPassiveAnnual = finalYear.end * curYield;
+      document.getElementById("proj-end-balance").innerText = formatCurrency(finalYear.end);
       document.getElementById("proj-passive-income").innerText = `Generates ~${formatCurrency(finalPassiveAnnual)} / yr (${formatCurrency(finalPassiveAnnual / 12)} / mo)`;
 
-      // Render Projections Table
       const pbody = document.getElementById("proj-table-body");
       pbody.innerHTML = "";
-      let prevBal = totalMvAud;
+      const projCards = document.getElementById("proj-mobile-cards");
+      projCards.innerHTML = "";
 
-      projResults.forEach(row => {
+      progression.slice(1).forEach(row => {
+        const monthlyRun = (row.end * curYield) / 12;
+
+        // Desktop Table
         const tr = document.createElement("tr");
-        const startVal = prevBal;
-        const annualContrib = contrib * 12;
-        const annualDivs = row.portfolioValue - (drip ? (startVal + annualContrib) : 0);
-        prevBal = row.portfolioValue;
-
         tr.innerHTML = `
           <td class="font-bold">Year ${row.year}</td>
-          <td class="num" style="text-align: right;">${formatCurrency(startVal)}</td>
-          <td class="num" style="text-align: right;">+${formatCurrency(annualContrib)}</td>
-          <td class="num font-semibold" style="text-align: right; color: var(--success);">${formatCurrency(row.annualIncome)}</td>
-          <td class="num font-bold" style="text-align: right; color: var(--primary);">${formatCurrency(row.portfolioValue)}</td>
-          <td class="num" style="text-align: right;">${formatCurrency(row.annualIncome / 12)} / mo</td>
+          <td class="num" style="text-align: right;">${formatCurrency(row.start)}</td>
+          <td class="num" style="text-align: right; color: var(--muted-foreground);">+${formatCurrency(row.contrib)}</td>
+          <td class="num font-semibold" style="text-align: right; color: var(--success);">${formatCurrency(row.divs)}</td>
+          <td class="num font-bold" style="text-align: right; color: var(--primary);">${formatCurrency(row.end)}</td>
+          <td class="num font-semibold" style="text-align: right;">${formatCurrency(monthlyRun)} / mo</td>
         `;
         pbody.appendChild(tr);
+
+        // Mobile Card
+        const card = document.createElement("div");
+        card.className = "mobile-card";
+        card.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+            <div style="font-size: 1.1rem; font-weight: 800;">Year ${row.year} Milestone</div>
+            <div class="num font-bold text-primary" style="font-size: 1.15rem;">${formatCurrency(row.end)}</div>
+          </div>
+          <div class="mobile-card-grid">
+            <div>
+              <dt>Annual Dividends</dt>
+              <dd class="num text-success">${formatCurrency(row.divs)}</dd>
+            </div>
+            <div>
+              <dt>Monthly Passive Flow</dt>
+              <dd class="num">${formatCurrency(monthlyRun)} / mo</dd>
+            </div>
+            <div>
+              <dt>Contributions</dt>
+              <dd class="num">+${formatCurrency(row.contrib)}</dd>
+            </div>
+            <div>
+              <dt>Starting Balance</dt>
+              <dd class="num">${formatCurrency(row.start)}</dd>
+            </div>
+          </div>
+        `;
+        projCards.appendChild(card);
       });
 
-      // Render SVG Chart
-      const chartData = [
-        { year: 0, end: totalMvAud, totalContributed: totalMvAud },
-        ...projResults.map(p => ({ year: p.year, end: p.portfolioValue, totalContributed: p.totalInvested }))
-      ];
-      renderSvgChart(chartData);
+      renderSvgChart(progression);
     }
 
     function renderSvgChart(data) {
       const container = document.getElementById("projections-chart");
       const width = container.clientWidth || 600;
-      const height = 300;
-      const padding = { top: 20, right: 30, bottom: 40, left: 65 };
+      const height = 320;
+      const padding = { top: 20, right: 25, bottom: 40, left: 70 };
 
       const maxVal = Math.max(...data.map(d => d.end)) * 1.08;
       const minVal = 0;
@@ -2268,17 +2489,17 @@
             const y = yScale(maxVal * ratio);
             return `
               <line x1="${padding.left}" y1="${y}" x2="${width - padding.right}" y2="${y}" stroke="var(--border)" stroke-dasharray="3,3"/>
-              <text x="${padding.left - 8}" y="${y + 4}" font-size="10" fill="var(--muted-foreground)" text-anchor="end" class="num">${formatCurrency(maxVal * ratio)}</text>
+              <text x="${padding.left - 10}" y="${y + 4}" font-size="11" font-weight="600" fill="var(--muted-foreground)" text-anchor="end" class="num">${formatCurrency(maxVal * ratio)}</text>
             `;
           }).join("")}
 
           <polygon points="${areaPoints}" fill="url(#grad-blue)"/>
-          <polyline points="${contribPoints}" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,4"/>
-          <polyline points="${valuePoints}" fill="none" stroke="#0284c7" stroke-width="3"/>
+          <polyline points="${contribPoints}" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="4,4"/>
+          <polyline points="${valuePoints}" fill="none" stroke="#0284c7" stroke-width="3.5"/>
 
           ${data.map(d => `
-            <circle cx="${xScale(d.year)}" cy="${yScale(d.end)}" r="4" fill="#0284c7" stroke="#ffffff" stroke-width="2"/>
-            <text x="${xScale(d.year)}" y="${height - padding.bottom + 20}" font-size="11" fill="var(--muted-foreground)" text-anchor="middle">Y${d.year}</text>
+            <circle cx="${xScale(d.year)}" cy="${yScale(d.end)}" r="5" fill="#0284c7" stroke="#ffffff" stroke-width="2"/>
+            <text x="${xScale(d.year)}" y="${height - padding.bottom + 22}" font-size="12" font-weight="700" fill="var(--muted-foreground)" text-anchor="middle">Y${d.year}</text>
           `).join("")}
         </svg>
       `;
@@ -2286,7 +2507,6 @@
       container.innerHTML = svg;
     }
 
-    // Thai Tax Engine
     function renderThaiTax() {
       const BRACKETS = [
         { min: 0, max: 150000, rate: 0.00, label: "0 – 150,000", maxTax: 0 },
@@ -2296,7 +2516,7 @@
         { min: 750001, max: 1000000, rate: 0.20, label: "750,001 – 1,000,000", maxTax: 50000 },
         { min: 1000001, max: 2000000, rate: 0.25, label: "1,000,001 – 2,000,000", maxTax: 250000 },
         { min: 2000001, max: 5000000, rate: 0.30, label: "2,000,001 – 5,000,000", maxTax: 900000 },
-        { min: 5000001, max: Infinity, rate: 0.35, label: "> 5,000,000", maxTax: Infinity }
+        { min: 500001, max: Infinity, rate: 0.35, label: "> 5,000,000", maxTax: Infinity }
       ];
 
       const vintage = document.getElementById("thai-vintage").value;
@@ -2318,72 +2538,92 @@
       } else {
         isExempt = false;
         title = `ASSESSABLE under Order Paw 161/2566 (Report on P.N.D.90)`;
-        desc = `Foreign-sourced income earned post-1 January 2024 remitted into Thailand while tax resident is assessable to Thai PIT in calendar year ${year}. Check foreign tax credits under Double Tax Agreements (DTAs).`;
+        desc = `Foreign-sourced income earned post-1 January 2024 remitted into Thailand while tax resident (>180 days) is assessable to Thai PIT in calendar year ${year}. Check foreign tax credits under Double Tax Agreements (DTAs).`;
       }
 
       vBox.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 700; color: ${isExempt ? "var(--success)" : "var(--warning)"};">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        <div style="display: flex; align-items: center; gap: 0.6rem; font-weight: 800; font-size: 1.05rem; color: ${isExempt ? "var(--success)" : "var(--warning)"};">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           ${title}
         </div>
-        <p style="font-size: 0.85rem; color: var(--muted-foreground); margin-top: 0.5rem; line-height: 1.4;">${desc}</p>
+        <p style="font-size: 0.95rem; color: var(--muted-foreground); margin-top: 0.65rem; line-height: 1.55;">${desc}</p>
       `;
 
-      // Deductions using calculateThaiTax
       const grossIncome = parseFloat(document.getElementById("calc-gross-income").value) || 0;
+      const stdDeduct = Math.min(grossIncome * 0.5, 100000);
+      document.getElementById("calc-std-deduct").value = formatNumber(stdDeduct);
+
+      const personal = 60000;
       const sso = Math.min(parseFloat(document.getElementById("calc-sso").value) || 0, 9000);
       const insurance = Math.min(parseFloat(document.getElementById("calc-insurance").value) || 0, 100000);
       const rmf = Math.min(parseFloat(document.getElementById("calc-rmf").value) || 0, 500000);
       const mortgage = Math.min(parseFloat(document.getElementById("calc-mortgage").value) || 0, 100000);
       const donation = parseFloat(document.getElementById("calc-donation").value) || 0;
 
-      const additionalDeductions = sso + insurance + rmf + mortgage + donation;
+      const totalDeductions = stdDeduct + personal + sso + insurance + rmf + mortgage + donation;
+      const netTaxable = Math.max(0, grossIncome - totalDeductions);
 
-      const taxResult = calculateThaiTax({
-        annualAssessableIncomeTHB: grossIncome,
-        standardExpenseDeductionTHB: 100000,
-        personalAllowanceTHB: 60000,
-        additionalDeductionsTHB: additionalDeductions
-      });
+      let remaining = netTaxable;
+      let totalTax = 0;
+      const bracketRows = [];
 
-      document.getElementById("calc-std-deduct").value = formatNumber(Math.min(grossIncome * 0.5, 100000));
-      document.getElementById("res-total-deductions").innerText = formatNumber(taxResult.totalDeductions) + " THB";
-      document.getElementById("res-net-taxable").innerText = formatNumber(taxResult.taxableIncome) + " THB";
-      document.getElementById("res-tax-due").innerText = "฿" + formatNumber(taxResult.taxPayableTHB);
-      document.getElementById("thai-effective-tax").innerText = "฿" + formatNumber(taxResult.taxPayableTHB);
-      document.getElementById("thai-effective-rate").innerText = `Effective Rate: ${taxResult.effectiveRate.toFixed(2)}% on Assessable Income`;
+      for (let b of BRACKETS) {
+        if (remaining <= 0) {
+          bracketRows.push({ ...b, taxable: 0, tax: 0, active: false });
+          continue;
+        }
 
-      // Render Brackets Table
+        const span = b.max - b.min + (b.min === 0 ? 0 : 1);
+        const taxableInBracket = Math.min(remaining, span);
+        const taxInBracket = taxableInBracket * b.rate;
+        totalTax += taxInBracket;
+        remaining -= taxableInBracket;
+
+        bracketRows.push({
+          ...b,
+          taxable: taxableInBracket,
+          tax: taxInBracket,
+          active: taxableInBracket > 0
+        });
+      }
+
+      const effectiveRate = grossIncome > 0 ? (totalTax / grossIncome) * 100 : 0;
+
+      document.getElementById("res-total-deductions").innerText = formatNumber(totalDeductions) + " THB";
+      document.getElementById("res-net-taxable").innerText = formatNumber(netTaxable) + " THB";
+      document.getElementById("res-tax-due").innerText = "฿" + formatNumber(totalTax);
+      document.getElementById("thai-effective-tax").innerText = "฿" + formatNumber(totalTax);
+      document.getElementById("thai-effective-rate").innerText = `Effective Rate: ${effectiveRate.toFixed(2)}% on Assessable Income`;
+
       const btbody = document.getElementById("brackets-tbody");
       btbody.innerHTML = "";
-      let remaining = taxResult.taxableIncome;
-
-      BRACKETS.forEach(b => {
-        const span = b.max - b.min + (b.min === 0 ? 0 : 1);
-        const taxable = Math.min(Math.max(0, remaining), span);
-        const taxInB = taxable * b.rate;
-        const isActive = taxable > 0;
-        remaining -= taxable;
-
+      bracketRows.forEach(b => {
         const tr = document.createElement("tr");
-        if (isActive) tr.style.backgroundColor = "var(--accent)";
+        if (b.active) tr.style.backgroundColor = "var(--accent)";
         tr.innerHTML = `
           <td class="font-medium">${b.label}</td>
-          <td class="num" style="text-align: right;">${(b.rate * 100).toFixed(0)}%</td>
-          <td class="num" style="text-align: right; ${taxInB > 0 ? "font-weight: 700; color: var(--primary);" : ""}">${taxInB > 0 ? "฿" + formatNumber(taxInB) : "—"}</td>
+          <td class="num font-bold" style="text-align: right;">${(b.rate * 100).toFixed(0)}%</td>
+          <td class="num" style="text-align: right; ${b.tax > 0 ? "font-weight: 800; color: var(--primary);" : ""}">${b.tax > 0 ? "฿" + formatNumber(b.tax) : "—"}</td>
           <td class="num" style="text-align: right; color: var(--muted-foreground);">${b.maxTax === Infinity ? "—" : "฿" + formatNumber(b.maxTax)}</td>
         `;
         btbody.appendChild(tr);
       });
 
-      // Render Remittance log
+      // Remittances Desktop Table
       const rtbody = document.getElementById("remits-tbody");
       rtbody.innerHTML = "";
+
+      // Remittances Mobile Cards
+      const remitsCards = document.getElementById("remits-mobile-cards");
+      remitsCards.innerHTML = "";
+
       remittances.forEach((r, idx) => {
+        const exempt = r.status.includes("Exempt") || r.vintage === "Pre-2024";
+
+        // Desktop Row
         const tr = document.createElement("tr");
-        const exempt = r.status === "Exempt" || r.vintage === "Pre-2024";
         tr.innerHTML = `
-          <td class="num whitespace-nowrap">${r.date}</td>
+          <td class="num whitespace-nowrap font-medium">${r.link ? `<a href="${r.link}" target="_blank" style="color: var(--primary); text-decoration: underline;">${r.date}</a>` : r.date}</td>
           <td>${r.nature}</td>
           <td><span class="badge badge-muted">${r.vintage}</span></td>
           <td class="num" style="text-align: right;">${r.sourceAmt}</td>
@@ -2394,25 +2634,66 @@
           </td>
         `;
         rtbody.appendChild(tr);
+
+        // Mobile Card
+        const card = document.createElement("div");
+        card.className = "mobile-card";
+        card.innerHTML = `
+          <div class="mobile-card-top">
+            <div>
+              <div class="num font-bold" style="font-size: 1.1rem;">
+                ${r.link ? `<a href="${r.link}" target="_blank" style="color: var(--primary); text-decoration: underline;">${r.date}</a>` : r.date}
+              </div>
+              <div style="font-size: 0.85rem; color: var(--muted-foreground); margin-top: 2px;">${r.nature}</div>
+            </div>
+            <span class="badge ${exempt ? "badge-success" : "badge-warning"}">${exempt ? "Exempt" : "Assessable"}</span>
+          </div>
+
+          <div class="mobile-card-grid">
+            <div>
+              <dt>THB Received</dt>
+              <dd class="num text-primary" style="font-size: 1.15rem;">฿${formatNumber(r.thb)}</dd>
+            </div>
+            <div>
+              <dt>Vintage</dt>
+              <dd><span class="badge badge-muted">${r.vintage}</span></dd>
+            </div>
+            <div style="grid-column: span 2;">
+              <dt>Source Details</dt>
+              <dd class="num" style="font-size: 0.875rem;">${r.sourceAmt}</dd>
+            </div>
+          </div>
+
+          <div class="mobile-card-actions">
+            <button class="btn btn-sm btn-delete-remit" data-idx="${idx}" style="color: var(--destructive);">Remove Record</button>
+          </div>
+        `;
+        remitsCards.appendChild(card);
       });
     }
 
-    // Marine Operations Engine
     function renderMarine() {
+      // Desktop Table
       const tbody = document.getElementById("invoices-tbody");
       tbody.innerHTML = "";
 
+      // Mobile Cards
+      const invoiceCards = document.getElementById("invoices-mobile-cards");
+      invoiceCards.innerHTML = "";
+
       invoices.forEach((inv, idx) => {
+        const gst = inv.gst !== undefined ? inv.gst : inv.ex * 0.10;
+        const total = inv.total !== undefined ? inv.total : inv.ex + gst;
+
+        // Desktop Table
         const tr = document.createElement("tr");
-        const gst = inv.ex * 0.10;
-        const total = inv.ex + gst;
         tr.innerHTML = `
-          <td class="font-bold num">${inv.id}</td>
-          <td class="num">${inv.date}</td>
+          <td class="font-bold num">${inv.link ? `<a href="${inv.link}" target="_blank" style="color: var(--primary); text-decoration: underline;">${inv.id}</a>` : inv.id}</td>
+          <td class="num whitespace-nowrap">${inv.date}</td>
           <td>${inv.desc}</td>
-          <td>${inv.client}</td>
+          <td>${inv.vendor || inv.client}</td>
           <td class="num" style="text-align: right;">${formatCurrency(inv.ex)}</td>
-          <td class="num" style="text-align: right; color: var(--warning);">${formatCurrency(gst)}</td>
+          <td class="num font-semibold" style="text-align: right; color: var(--warning);">${formatCurrency(gst)}</td>
           <td class="num font-bold" style="text-align: right;">${formatCurrency(total)}</td>
           <td><span class="badge ${inv.status === "Paid" ? "badge-success" : inv.status === "Settled" ? "badge-info" : "badge-warning"}">${inv.status}</span></td>
           <td style="text-align: center;">
@@ -2420,10 +2701,49 @@
           </td>
         `;
         tbody.appendChild(tr);
+
+        // Mobile Card
+        const card = document.createElement("div");
+        card.className = "mobile-card";
+        card.innerHTML = `
+          <div class="mobile-card-top">
+            <div>
+              <div class="num font-bold" style="font-size: 1.1rem;">
+                ${inv.link ? `<a href="${inv.link}" target="_blank" style="color: var(--primary); text-decoration: underline;">${inv.id}</a>` : inv.id}
+                <span class="num text-xs text-muted-foreground font-normal" style="margin-left: 6px;">· ${inv.date}</span>
+              </div>
+              <div style="font-size: 0.85rem; color: var(--muted-foreground); margin-top: 2px;">${inv.desc}</div>
+            </div>
+            <span class="badge ${inv.status === "Paid" ? "badge-success" : inv.status === "Settled" ? "badge-info" : "badge-warning"}">${inv.status}</span>
+          </div>
+
+          <div class="mobile-card-grid">
+            <div>
+              <dt>Gross Total (inc GST)</dt>
+              <dd class="num text-primary" style="font-size: 1.15rem;">${formatCurrency(total)}</dd>
+            </div>
+            <div>
+              <dt>GST 10% (Box 1A)</dt>
+              <dd class="num text-warning">${formatCurrency(gst)}</dd>
+            </div>
+            <div>
+              <dt>Revenue (ex-GST)</dt>
+              <dd class="num">${formatCurrency(inv.ex)}</dd>
+            </div>
+            <div>
+              <dt>Client Entity</dt>
+              <dd style="font-size: 0.875rem;">${inv.vendor || inv.client}</dd>
+            </div>
+          </div>
+
+          <div class="mobile-card-actions">
+            <button class="btn btn-sm btn-delete-invoice" data-idx="${idx}" style="color: var(--destructive);">Delete Invoice</button>
+          </div>
+        `;
+        invoiceCards.appendChild(card);
       });
     }
 
-    // Calendar Engine
     function renderCalendar() {
       const list = document.getElementById("calendar-event-list");
       list.innerHTML = "";
@@ -2439,28 +2759,27 @@
 
       filtered.forEach((e, idx) => {
         const item = document.createElement("div");
-        item.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; border: 1px solid var(--border); border-radius: var(--radius); background-color: var(--card);";
+        item.style.cssText = "display: flex; justify-content: space-between; align-items: center; padding: 1.15rem 1.25rem; border: 1px solid var(--border); border-radius: var(--radius); background-color: var(--card);";
         item.innerHTML = `
           <div style="display: flex; align-items: center; gap: 1rem;">
-            <div style="background: var(--muted); padding: 0.5rem 0.75rem; border-radius: 0.5rem; text-align: center; border: 1px solid var(--border); min-width: 80px;">
-              <div class="num" style="font-size: 0.75rem; color: var(--muted-foreground);">${new Date(e.date).toLocaleDateString("en-US", { month: "short" }).toUpperCase()}</div>
-              <div class="num" style="font-size: 1.25rem; font-weight: 700;">${new Date(e.date).getDate()}</div>
+            <div style="background: var(--muted); padding: 0.5rem 0.75rem; border-radius: 0.5rem; text-align: center; border: 1px solid var(--border); min-width: 75px; flex-shrink: 0;">
+              <div class="num" style="font-size: 0.75rem; font-weight: 700; color: var(--muted-foreground);">${new Date(e.date).toLocaleDateString("en-US", { month: "short" }).toUpperCase()}</div>
+              <div class="num" style="font-size: 1.3rem; font-weight: 800;">${new Date(e.date).getDate()}</div>
             </div>
-            <div>
-              <div style="font-weight: 600; font-size: 0.95rem;">${e.title}</div>
-              <div style="font-size: 0.8rem; color: var(--muted-foreground);">${e.note}</div>
+            <div style="min-width: 0;">
+              <div style="font-weight: 700; font-size: 1rem; line-height: 1.3;">${e.title}</div>
+              <div style="font-size: 0.825rem; color: var(--muted-foreground); margin-top: 3px;">${e.note}</div>
             </div>
           </div>
-          <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div style="display: flex; align-items: center; gap: 0.65rem; flex-shrink: 0;">
             <span class="badge ${toneMap[e.kind] || "badge-muted"}">${e.kind}</span>
-            <button class="btn btn-sm btn-delete-event" data-idx="${idx}" style="color: var(--destructive);">&times;</button>
+            <button class="btn btn-sm btn-delete-event" data-idx="${idx}" style="color: var(--destructive); padding: 0.2rem 0.5rem;">&times;</button>
           </div>
         `;
         list.appendChild(item);
       });
     }
 
-    // AI Advisor Copilot Chat Engine
     function renderChat() {
       const container = document.getElementById("chat-messages");
       container.innerHTML = "";
@@ -2496,32 +2815,32 @@
         const q = userQuery.toLowerCase();
 
         if (q.includes("dividend") || q.includes("reinvest") || q.includes("drift") || q.includes("sleeve")) {
-          reply = `Based on your **NEOS Portfolio Sleeve Drift Analysis**:
-- **Crypto Sleeve** (BTCI, NEHI) is currently at **56.0%**, which exceeds your 50.0% ceiling.
-- **Equities Sleeve** (SPYI, QQQI) is underweight at **29.4%** against your 35.0% target.
-- **Gold** (IAUI) sits comfortably balanced at **14.6%**.
+          reply = `Based on your **Master_Financial_Ledger Sleeve Drift Analysis** (1,868 NEOS units):
+- **Crypto Sleeve** (BTCI 633, NEHI 590) sits at **53.7%** (balanced within your 45–55% target range).
+- **Equities Sleeve** (SPYI 199, QQQI 192) sits at **29.5%** (slightly underweight against your 30–35% target).
+- **Gold Sleeve** (IAUI 254) sits balanced at **16.7%** (15–20% target).
 
-**Actionable Recommendation:**
-Direct the entire upcoming distribution (~A$1,463) into **SPYI** (~A$750) and **QQQI** (~A$713) to restore equities allocation while avoiding tax drag.`;
+**Reinvestment Routing Strategy:**
+Direct this month's net distribution (~A$1,615 AUD) into **SPYI** (~A$820) and **QQQI** (~A$795) to bring your equities allocation back into the 30–35% target corridor.`;
         } else if (q.includes("gst") || q.includes("bas") || q.includes("ato") || q.includes("box 1a")) {
           reply = `For **ATO BAS Q1 FY27** (due 25 November 2026):
-- **Bareboat Charter MV COM 4**: A$6,500 ex-GST + A$650 GST
-- **PAHE ROI Guarantee**: A$20,000 ex-GST + A$2,000 GST
-- **Total Gross Invoiced**: A$29,150
-- **GST Payable at Box 1A**: **A$2,650 AUD** (or A$4,600 on full-year annualized schedule).`;
+- **Quarterly Bareboat Charter MV COM 4**: A$6,500 ex-GST + A$650 GST (Total A$7,150)
+- **Equipment Hire / ROI Guarantee**: A$20,000 ex-GST + A$2,000 GST (Total A$22,000)
+- **Net GST Liability at Box 1A**: **A$2,650 AUD** (Full-year annual liability: A$4,600).
+- Receipts and confirmation PDFs are archived in your Google Drive under \`Financials_Master\`.`;
         } else if (q.includes("thai") || q.includes("remit") || q.includes("taxable") || q.includes("161")) {
           reply = `Under Thailand Revenue Department **Orders Paw 161/2566 & 162/2566**:
-1. **Pre-2024 Savings/Capital**: 100% tax-exempt when brought into Thailand.
-2. **2026 Incomes/Distributions**: Because you reside in Bangkok for >180 days, any 2026 foreign charter or dividend income remitted during 2026 is **assessable under P.N.D.90**.
-3. **Strategy Tip**: You can claim up to 100,000 THB standard deduction plus your 60,000 THB personal allowance, mortgage interest, and health insurance to lower your net bracket.`;
+1. **Pre-2024 Savings**: Grandfathered and completely exempt from Thai Personal Income Tax under Order Paw 162.
+2. **Post-2024 Remittances**: Because you reside in Bangkok for >180 days/year, foreign income earned and remitted is **assessable under P.N.D.90**.
+3. **Tax Relief Optimization**: Claim the standard 50% deduction (capped at 100k THB), your 60k THB personal allowance, mortgage interest, and health insurance to keep effective tax rates between 5% and 10%.`;
         } else if (q.includes("5 years") || q.includes("projection") || q.includes("drip") || q.includes("growth")) {
-          reply = `With **17.5% net yield** and full **DRIP reinvestment** plus A$500/month additions:
-- **Starting Value**: A$108,024
-- **Year 3 Target**: A$218,400
-- **Year 5 Projected Balance**: **A$312,450**
-- **Projected Annual Passive Income**: **A$54,678 / yr** (or ~A$4,556 / month).`;
+          reply = `With **17.5% net yield**, full **DRIP reinvestment**, and A$500/month contributions:
+- **Starting Value**: A$104,557 AUD (1,868 units)
+- **Year 3 Projection**: A$212,800 AUD
+- **Year 5 Projected Balance**: **A$308,120 AUD**
+- **Projected Passive Cash Flow**: **A$53,921 / year** (~A$4,493 / month).`;
         } else {
-          reply = `I have recorded your query. Regarding your portfolio position of **${formatCurrency(108024)}**, your ongoing cash flow run-rate is healthy at **${formatCurrency(5296)} / month**. Is there a specific scenario in Thai tax compliance, marine invoicing, or dividend reinvestment you would like me to calculate?`;
+          reply = `I am tracking your consolidated financial position from **Master_Financial_Ledger** (A$104,557 portfolio value, A$65,375 projected annual income across dividends and charter fees). How can I assist with your next tax filing, invoice reconciliation, or portfolio rebalance?`;
         }
 
         chatMessages.push({ id: "msg-" + Date.now(), role: "assistant", text: reply });
@@ -2530,7 +2849,6 @@ Direct the entire upcoming distribution (~A$1,463) into **SPYI** (~A$750) and **
       }, 500);
     }
 
-    // --- DOM Event Listeners & Initialization ---
     document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".currency-btn").forEach(btn => {
         btn.addEventListener("click", () => {
@@ -2606,14 +2924,14 @@ Direct the entire upcoming distribution (~A$1,463) into **SPYI** (~A$750) and **
 
       refreshBtn.addEventListener("click", () => {
         syncIcon.classList.add("spin");
-        syncLabel.innerText = "Syncing…";
+        if (syncLabel) syncLabel.innerText = "Syncing…";
         refreshBtn.disabled = true;
 
         setTimeout(() => {
           syncIcon.classList.remove("spin");
-          syncLabel.innerText = "Sync";
+          if (syncLabel) syncLabel.innerText = "Sync";
           refreshBtn.disabled = false;
-          showToast("Data synchronized with live market rates & ledger records.");
+          showToast("Data synchronized with Master_Financial_Ledger.");
           switchTab(activeTab);
         }, 900);
       });
@@ -2679,7 +2997,7 @@ Direct the entire upcoming distribution (~A$1,463) into **SPYI** (~A$750) and **
         const sleeve = document.getElementById("modal-sleeve").value;
         const units = parseFloat(document.getElementById("modal-units").value) || 0;
         const price = parseFloat(document.getElementById("modal-price").value) || 0;
-        const costAud = parseFloat(document.getElementById("modal-cost-aud").value) || (price * 1.45);
+        const costAud = parseFloat(document.getElementById("modal-cost-aud").value) || (price * 1.434);
         const div = parseFloat(document.getElementById("modal-div").value) || 0;
 
         if (!ticker || units <= 0) {
@@ -2687,9 +3005,9 @@ Direct the entire upcoming distribution (~A$1,463) into **SPYI** (~A$750) and **
           return;
         }
 
-        const mv = units * price * 1.45;
+        const mv = units * price * 1.434;
         const newHolding = {
-          ticker, name: ticker, sleeve, units, shares: units, costUsd: price, costAud, avgCost: costAud, live: price, currentPrice: price * 1.45, mv, weight: 0, div: units * div, annualDividendYield: mv > 0 ? (units * div * 12) / mv : 0.12
+          ticker, name: ticker, sleeve, units, shares: units, costUsd: price, costAud, avgCost: costAud, live: price, currentPrice: price * 1.434, mv, weight: 0, div: units * div, annualDividendYield: mv > 0 ? (units * div * 12) / mv : 0.12
         };
 
         if (idx >= 0 && idx < holdings.length) {
@@ -2704,29 +3022,43 @@ Direct the entire upcoming distribution (~A$1,463) into **SPYI** (~A$750) and **
         showToast(`Saved holding for ${ticker}`);
       });
 
+      function handleEditHolding(idx) {
+        const h = holdings[idx];
+        if (h) {
+          document.getElementById("holding-modal-title").innerText = `Edit Holding: ${h.ticker}`;
+          document.getElementById("edit-holding-index").value = idx;
+          document.getElementById("modal-ticker").value = h.ticker;
+          document.getElementById("modal-sleeve").value = h.sleeve;
+          document.getElementById("modal-units").value = h.units || h.shares;
+          document.getElementById("modal-price").value = h.live;
+          document.getElementById("modal-cost-aud").value = h.costAud;
+          document.getElementById("modal-div").value = (h.div / (h.units || 1)).toFixed(2);
+          document.getElementById("modal-holding").classList.add("open");
+        }
+      }
+
+      function handleDeleteHolding(idx) {
+        if (confirm(`Are you sure you want to remove ${holdings[idx].ticker}?`)) {
+          holdings.splice(idx, 1);
+          save("holdings", holdings);
+          renderOverview();
+          showToast("Asset removed from portfolio.");
+        }
+      }
+
       document.getElementById("holdings-tbody").addEventListener("click", (e) => {
         if (e.target.classList.contains("btn-edit-holding")) {
-          const idx = parseInt(e.target.getAttribute("data-idx"));
-          const h = holdings[idx];
-          if (h) {
-            document.getElementById("holding-modal-title").innerText = `Edit Holding: ${h.ticker}`;
-            document.getElementById("edit-holding-index").value = idx;
-            document.getElementById("modal-ticker").value = h.ticker;
-            document.getElementById("modal-sleeve").value = h.sleeve;
-            document.getElementById("modal-units").value = h.units || h.shares;
-            document.getElementById("modal-price").value = h.live;
-            document.getElementById("modal-cost-aud").value = h.costAud;
-            document.getElementById("modal-div").value = (h.div / (h.units || 1)).toFixed(2);
-            document.getElementById("modal-holding").classList.add("open");
-          }
+          handleEditHolding(parseInt(e.target.getAttribute("data-idx")));
         } else if (e.target.classList.contains("btn-delete-holding")) {
-          const idx = parseInt(e.target.getAttribute("data-idx"));
-          if (confirm(`Are you sure you want to remove ${holdings[idx].ticker}?`)) {
-            holdings.splice(idx, 1);
-            save("holdings", holdings);
-            renderOverview();
-            showToast("Asset removed from portfolio.");
-          }
+          handleDeleteHolding(parseInt(e.target.getAttribute("data-idx")));
+        }
+      });
+
+      document.getElementById("holdings-mobile-cards").addEventListener("click", (e) => {
+        if (e.target.classList.contains("btn-edit-holding")) {
+          handleEditHolding(parseInt(e.target.getAttribute("data-idx")));
+        } else if (e.target.classList.contains("btn-delete-holding")) {
+          handleDeleteHolding(parseInt(e.target.getAttribute("data-idx")));
         }
       });
 
@@ -2742,20 +3074,29 @@ Direct the entire upcoming distribution (~A$1,463) into **SPYI** (~A$750) and **
         const ex = parseFloat(document.getElementById("inv-ex").value) || 0;
         const status = document.getElementById("inv-status").value;
 
-        invoices.push({ id, date, desc, client, ex, status });
+        invoices.push({ id, date, desc, client, ex, status, gst: ex * 0.1, total: ex * 1.1 });
         save("invoices", invoices);
         document.getElementById("modal-invoice").classList.remove("open");
         renderMarine();
         showToast(`Invoice ${id} added to marine ledger.`);
       });
 
+      function handleDeleteInvoice(idx) {
+        invoices.splice(idx, 1);
+        save("invoices", invoices);
+        renderMarine();
+        showToast("Invoice removed.");
+      }
+
       document.getElementById("invoices-tbody").addEventListener("click", (e) => {
         if (e.target.classList.contains("btn-delete-invoice")) {
-          const idx = parseInt(e.target.getAttribute("data-idx"));
-          invoices.splice(idx, 1);
-          save("invoices", invoices);
-          renderMarine();
-          showToast("Invoice removed.");
+          handleDeleteInvoice(parseInt(e.target.getAttribute("data-idx")));
+        }
+      });
+
+      document.getElementById("invoices-mobile-cards").addEventListener("click", (e) => {
+        if (e.target.classList.contains("btn-delete-invoice")) {
+          handleDeleteInvoice(parseInt(e.target.getAttribute("data-idx")));
         }
       });
 
@@ -2769,7 +3110,7 @@ Direct the entire upcoming distribution (~A$1,463) into **SPYI** (~A$750) and **
         const nature = document.getElementById("remit-nature").value;
         const sourceAmt = document.getElementById("remit-source-amt").value;
         const thb = parseFloat(document.getElementById("remit-thb").value) || 0;
-        const status = vintage === "Pre-2024" ? "Exempt" : "Assessable";
+        const status = vintage === "Pre-2024" ? "Exempt (Paw 162)" : "Assessable (Paw 161)";
 
         remittances.unshift({ date, nature, vintage, sourceAmt, thb, status });
         save("remittances", remittances);
@@ -2778,13 +3119,22 @@ Direct the entire upcoming distribution (~A$1,463) into **SPYI** (~A$750) and **
         showToast("Remittance record appended to log.");
       });
 
+      function handleDeleteRemit(idx) {
+        remittances.splice(idx, 1);
+        save("remittances", remittances);
+        renderThaiTax();
+        showToast("Remittance record removed.");
+      }
+
       document.getElementById("remits-tbody").addEventListener("click", (e) => {
         if (e.target.classList.contains("btn-delete-remit")) {
-          const idx = parseInt(e.target.getAttribute("data-idx"));
-          remittances.splice(idx, 1);
-          save("remittances", remittances);
-          renderThaiTax();
-          showToast("Remittance record removed.");
+          handleDeleteRemit(parseInt(e.target.getAttribute("data-idx")));
+        }
+      });
+
+      document.getElementById("remits-mobile-cards").addEventListener("click", (e) => {
+        if (e.target.classList.contains("btn-delete-remit")) {
+          handleDeleteRemit(parseInt(e.target.getAttribute("data-idx")));
         }
       });
 
